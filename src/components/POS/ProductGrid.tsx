@@ -9,7 +9,21 @@ interface ProductGridProps {
 }
 
 const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
-  const { addToCart } = usePOS();
+  const { addToCart, state } = usePOS();
+  
+  const getCurrencySymbol = (currency: string) => {
+    switch (currency) {
+      case 'MAD':
+        return 'MAD';
+      case 'XAF':
+        return 'XAF';
+      case 'USD':
+        return '$';
+      case 'EUR':
+      default:
+        return '€';
+    }
+  };
   
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -26,7 +40,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
               className="w-full h-full object-cover"
             />
             <div className="absolute top-0 right-0 bg-pos-primary text-white px-2 py-1 text-sm font-semibold rounded-bl-lg">
-              {product.price.toFixed(2)} €
+              {product.price.toFixed(2)} {getCurrencySymbol(state.currency)}
             </div>
           </div>
           <CardContent className="p-2">
