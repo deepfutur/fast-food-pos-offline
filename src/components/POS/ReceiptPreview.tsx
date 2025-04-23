@@ -3,7 +3,7 @@ import { usePOS } from '../../context/POSContext';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { CartItem, Order } from '../../types/pos';
-import { Printer } from 'lucide-react';
+import { Printer, Download } from 'lucide-react';
 
 interface ReceiptPreviewProps {
   isOpen: boolean;
@@ -26,8 +26,24 @@ const ReceiptPreview: React.FC<ReceiptPreviewProps> = ({ isOpen, onClose, order 
   const time = new Date().toLocaleTimeString('fr-FR');
   
   const handlePrint = () => {
-    console.log('Impression du ticket...');
+    window.print();
     onClose();
+  };
+
+  const handleDownload = () => {
+    const receiptContent = document.querySelector('.receipt-content');
+    if (receiptContent) {
+      const content = receiptContent.innerHTML;
+      const blob = new Blob([content], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `recu-${date.replace(/\//g, '-')}-${time.replace(/:/g, '-')}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
   };
   
   return (
@@ -37,7 +53,7 @@ const ReceiptPreview: React.FC<ReceiptPreviewProps> = ({ isOpen, onClose, order 
           <DialogTitle>Aperçu du Ticket</DialogTitle>
         </DialogHeader>
         
-        <div className="bg-white p-6 font-mono text-sm border mx-auto w-80">
+        <div className="receipt-content bg-white p-6 font-mono text-sm border mx-auto w-80">
           <div className="text-center mb-4">
             <div className="font-bold text-lg">{businessInfo.name}</div>
             <div>{businessInfo.address}</div>
@@ -120,9 +136,20 @@ const ReceiptPreview: React.FC<ReceiptPreviewProps> = ({ isOpen, onClose, order 
           </div>
         </div>
         
-        <DialogFooter>
+        <DialogFooter className="flex gap-2">
           <Button variant="outline" onClick={onClose}>Fermer</Button>
-          <Button onClick={handlePrint} className="bg-pos-primary hover:bg-red-700">
+          <Button 
+            onClick={handleDownload} 
+            variant="outline"
+            className="bg-pos-primary text-white hover:bg-red-700"
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Télécharger
+          </Button>
+          <Button 
+            onClick={handlePrint}
+            className="bg-pos-primary hover:bg-red-700"
+          >
             <Printer className="mr-2 h-4 w-4" />
             Imprimer
           </Button>
