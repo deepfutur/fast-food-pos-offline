@@ -6,6 +6,8 @@ import { usePOS } from '../../context/POSContext';
 import { toast } from '@/components/ui/sonner';
 import PaymentMethods from './PaymentMethods';
 import OrderSummary from './OrderSummary';
+import { Input } from '@/components/ui/input';
+import { DollarSign } from 'lucide-react';
 
 interface PaymentDialogProps {
   isOpen: boolean;
@@ -54,6 +56,25 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ isOpen, onClose, onComple
           selectedMethod={paymentMethod}
           onMethodSelect={setPaymentMethod}
         />
+        
+        {paymentMethod === 'cash' && (
+          <div className="mt-4 space-y-2">
+            <label htmlFor="cash-amount" className="font-semibold">
+              Montant reçu
+            </label>
+            <div className="relative">
+              <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+              <Input
+                id="cash-amount"
+                type="number"
+                className="pl-10"
+                placeholder={`Minimum ${getCartTotal().toFixed(2)} MAD`}
+                value={cashAmount}
+                onChange={(e) => setCashAmount(e.target.value)}
+              />
+            </div>
+          </div>
+        )}
         
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>Annuler</Button>
