@@ -1,13 +1,68 @@
-// Update this page (the content is just a fallback if you fail to update the page)
 
-const Index = () => {
+import React from 'react';
+import { POSProvider } from '../context/POSContext';
+import LoginScreen from '../components/Auth/LoginScreen';
+import POS from './POS';
+import AdminDashboard from './Admin/Dashboard';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { usePOS } from '../context/POSContext';
+
+const ProtectedRoute: React.FC<{
+  children: React.ReactNode;
+  requiredRole?: 'admin' | 'cashier';
+}> = ({ children, requiredRole }) => {
+  const { state } = usePOS();
+  const { currentUser } = state;
+  
+  if (!currentUser) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  if (requiredRole === 'admin' && currentUser.role !== 'admin') {
+    return <Navigate to="/pos" replace />;
+  }
+  
+  return <>{children}</>;
+};
+
+const AppRouter: React.FC = () => {
+  const { state } = usePOS();
+  const { currentUser } = state;
+  
+  if (!currentUser) {
+    return <LoginScreen />;
+  }
+  
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <Routes>
+      <Route path="/" element={<Navigate to="/pos" replace />} />
+      <Route path="/login" element={<LoginScreen />} />
+      <Route 
+        path="/pos" 
+        element={
+          <ProtectedRoute>
+            <POS />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/admin" 
+        element={
+          <ProtectedRoute requiredRole="admin">
+            <AdminDashboard />
+          </ProtectedRoute>
+        } 
+      />
+      <Route path="*" element={<Navigate to="/pos" replace />} />
+    </Routes>
+  );
+};
+
+const Index: React.FC = () => {
+  return (
+    <POSProvider>
+      <AppRouter />
+    </POSProvider>
   );
 };
 

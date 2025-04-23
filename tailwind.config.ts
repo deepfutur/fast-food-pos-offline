@@ -52,6 +52,19 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				// Fast food POS specific colors
+				pos: {
+					primary: "#e74c3c",
+					secondary: "#2ecc71",
+					accent: "#f39c12",
+					background: "#ecf0f1",
+					dark: "#34495e",
+					light: "#ffffff",
+					success: "#27ae60",
+					warning: "#f1c40f",
+					danger: "#c0392b",
+					info: "#3498db"
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
