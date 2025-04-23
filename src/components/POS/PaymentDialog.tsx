@@ -1,10 +1,11 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Separator } from '@/components/ui/separator';
-import { CreditCard, DollarSign, Receipt } from 'lucide-react';
 import { usePOS } from '../../context/POSContext';
 import { toast } from '@/components/ui/sonner';
+import PaymentMethods from './PaymentMethods';
+import OrderSummary from './OrderSummary';
 
 interface PaymentDialogProps {
   isOpen: boolean;
@@ -41,61 +42,18 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ isOpen, onClose, onComple
           <DialogTitle>Finaliser la commande</DialogTitle>
         </DialogHeader>
         
-        <div className="space-y-4 py-4">
-          <div className="flex justify-between text-lg">
-            <span>Sous-total:</span>
-            <span>{getCartSubtotal().toFixed(2)} MAD</span>
-          </div>
-          <div className="flex justify-between text-lg">
-            <span>TVA ({(state.tax * 100).toFixed(0)}%):</span>
-            <span>{getCartTax().toFixed(2)} MAD</span>
-          </div>
-          <div className="flex justify-between text-lg font-bold">
-            <span>Total:</span>
-            <span>{getCartTotal().toFixed(2)} MAD</span>
-          </div>
-          
-          <Separator className="my-4" />
-          
-          <div className="space-y-2">
-            <div className="font-semibold mb-2">Mode de paiement</div>
-            <div className="grid grid-cols-3 gap-2">
-              <Button 
-                variant={paymentMethod === 'cash' ? 'default' : 'outline'}
-                className={paymentMethod === 'cash' ? 'bg-pos-success text-white' : ''}
-                onClick={() => setPaymentMethod('cash')}
-              >
-                <DollarSign className="mr-2 h-4 w-4" />
-                Espèces
-              </Button>
-              <Button 
-                variant={paymentMethod === 'card' ? 'default' : 'outline'}
-                className={paymentMethod === 'card' ? 'bg-pos-info text-white' : ''}
-                onClick={() => setPaymentMethod('card')}
-              >
-                <CreditCard className="mr-2 h-4 w-4" />
-                Carte
-              </Button>
-              <Button 
-                variant={paymentMethod === 'voucher' ? 'default' : 'outline'}
-                className={paymentMethod === 'voucher' ? 'bg-pos-accent text-white' : ''}
-                onClick={() => setPaymentMethod('voucher')}
-              >
-                <Receipt className="mr-2 h-4 w-4" />
-                Bon
-              </Button>
-            </div>
-          </div>
-          
-          {paymentMethod === 'cash' && parseFloat(cashAmount) > 0 && !isNaN(parseFloat(cashAmount)) && (
-            <div className="flex justify-between text-lg">
-              <span>Monnaie à rendre:</span>
-              <span className="font-bold">
-                {Math.max(0, parseFloat(cashAmount) - getCartTotal()).toFixed(2)} MAD
-              </span>
-            </div>
-          )}
-        </div>
+        <OrderSummary 
+          subtotal={getCartSubtotal()}
+          tax={getCartTax()}
+          total={getCartTotal()}
+          taxRate={state.tax}
+          cashAmount={cashAmount}
+        />
+        
+        <PaymentMethods 
+          selectedMethod={paymentMethod}
+          onMethodSelect={setPaymentMethod}
+        />
         
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>Annuler</Button>
