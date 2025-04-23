@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { usePOS } from '../../context/POSContext';
 import { Button } from '@/components/ui/button';
@@ -6,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { ArrowLeft, FileText, ShoppingBag, Users, Clock, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const formatDate = (timestamp: number) => {
   return new Date(timestamp).toLocaleString('fr-FR', {
@@ -22,6 +22,7 @@ const AdminDashboard: React.FC = () => {
   const { orders } = state;
   const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState('orders');
+  const [currency, setCurrency] = useState('MAD');
   
   const totalSales = orders.reduce((sum, order) => sum + order.total, 0);
   const totalOrders = orders.length;
@@ -288,11 +289,20 @@ const AdminDashboard: React.FC = () => {
                         </div>
                         <div className="space-y-2">
                           <label className="text-sm font-medium">Devise</label>
-                          <select className="w-full p-2 border rounded-md">
-                            <option value="EUR">Euro (€)</option>
-                            <option value="XAF">Franc CFA (XAF)</option>
-                            <option value="USD">Dollar US ($)</option>
-                          </select>
+                          <Select 
+                            value={currency} 
+                            onValueChange={(value: string) => setCurrency(value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Sélectionnez une devise" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="EUR">Euro (€)</SelectItem>
+                              <SelectItem value="XAF">Franc CFA (XAF)</SelectItem>
+                              <SelectItem value="USD">Dollar US ($)</SelectItem>
+                              <SelectItem value="MAD">Dirham Marocain (MAD)</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </div>
                       </div>
                     </div>

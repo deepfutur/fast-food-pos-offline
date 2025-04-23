@@ -1,4 +1,3 @@
-
 import { Category, Product, User, POSState } from '../types/pos';
 
 export const categories: Category[] = [
@@ -122,5 +121,6 @@ export const initialState: POSState = {
     address: '123 Rue de la Restauration, 75000 Paris',
     phone: '01 23 45 67 89',
     taxId: 'FR12345678900',
-  }
+  },
+  currency: 'MAD',
 };

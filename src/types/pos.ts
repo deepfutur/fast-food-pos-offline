@@ -1,4 +1,3 @@
-
 export interface Product {
   id: string;
   name: string;
@@ -76,4 +75,5 @@ export interface POSState {
     taxId: string;
     logo?: string;
   };
+  currency: 'EUR' | 'XAF' | 'USD' | 'MAD';
 }
