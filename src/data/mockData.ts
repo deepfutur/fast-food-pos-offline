@@ -1,3 +1,4 @@
+
 import { Category, Product, User, POSState } from '../types/pos';
 
 export const categories: Category[] = [
@@ -115,12 +116,12 @@ export const initialState: POSState = {
   users,
   selectedCategory: null,
   currentUser: null,
-  tax: 0.20, // 20% VAT
+  tax: 0, // Changed tax rate to 0 as requested
   businessInfo: {
-    name: 'Fast Food Express',
-    address: '123 Rue de la Restauration, 75000 Paris',
-    phone: '01 23 45 67 89',
-    taxId: 'FR12345678900',
+    name: 'Deli in the Box',
+    address: 'settat, maroc',
+    phone: '0695112794',
+    taxId: '', // Removed tax ID as requested
   },
   currency: 'MAD',
 };
