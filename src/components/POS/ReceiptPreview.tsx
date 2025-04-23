@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { usePOS } from '../../context/POSContext';
 import { Button } from '@/components/ui/button';
@@ -27,8 +26,6 @@ const ReceiptPreview: React.FC<ReceiptPreviewProps> = ({ isOpen, onClose, order 
   const time = new Date().toLocaleTimeString('fr-FR');
   
   const handlePrint = () => {
-    // Dans une vraie application Electron, cette fonction utiliserait node-escpos
-    // pour imprimer le reçu sur une imprimante thermique
     console.log('Impression du ticket...');
     onClose();
   };
@@ -82,26 +79,26 @@ const ReceiptPreview: React.FC<ReceiptPreviewProps> = ({ isOpen, onClose, order 
             <tfoot>
               <tr>
                 <td colSpan={2} className="text-right font-semibold">Sous-total:</td>
-                <td colSpan={2} className="text-right">{order.subtotal.toFixed(2)} €</td>
+                <td colSpan={2} className="text-right">{order.subtotal.toFixed(2)} MAD</td>
               </tr>
               <tr>
                 <td colSpan={2} className="text-right font-semibold">TVA ({(state.tax * 100).toFixed(0)}%):</td>
-                <td colSpan={2} className="text-right">{order.tax.toFixed(2)} €</td>
+                <td colSpan={2} className="text-right">{order.tax.toFixed(2)} MAD</td>
               </tr>
               <tr>
                 <td colSpan={2} className="text-right font-bold">TOTAL:</td>
-                <td colSpan={2} className="text-right font-bold">{order.total.toFixed(2)} €</td>
+                <td colSpan={2} className="text-right font-bold">{order.total.toFixed(2)} MAD</td>
               </tr>
               
               {order.paymentMethod === 'cash' && order.cashReceived && order.changeDue !== undefined && (
                 <>
                   <tr>
                     <td colSpan={2} className="text-right">Montant reçu:</td>
-                    <td colSpan={2} className="text-right">{order.cashReceived.toFixed(2)} €</td>
+                    <td colSpan={2} className="text-right">{order.cashReceived.toFixed(2)} MAD</td>
                   </tr>
                   <tr>
                     <td colSpan={2} className="text-right">Monnaie rendue:</td>
-                    <td colSpan={2} className="text-right">{order.changeDue.toFixed(2)} €</td>
+                    <td colSpan={2} className="text-right">{order.changeDue.toFixed(2)} MAD</td>
                   </tr>
                 </>
               )}

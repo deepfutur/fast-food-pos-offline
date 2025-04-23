@@ -73,7 +73,7 @@ const AdminDashboard: React.FC = () => {
               <ShoppingBag className="h-4 w-4 text-pos-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{totalSales.toFixed(2)} €</div>
+              <div className="text-2xl font-bold">{totalSales.toFixed(2)} MAD</div>
               <p className="text-xs text-gray-500">Total des ventes enregistrées</p>
             </CardContent>
           </Card>
@@ -164,7 +164,7 @@ const AdminDashboard: React.FC = () => {
                                   </span>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">
-                                  {order.total.toFixed(2)} €
+                                  {order.total.toFixed(2)} MAD
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                   {cashier?.name || 'Inconnu'}
@@ -206,7 +206,7 @@ const AdminDashboard: React.FC = () => {
                                 {product.quantity}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">
-                                {product.total.toFixed(2)} €
+                                {product.total.toFixed(2)} MAD
                               </td>
                             </tr>
                           ))}
