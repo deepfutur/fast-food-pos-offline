@@ -1,21 +1,42 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { usePOS } from '../../context/POSContext';
 import { Product, Category } from '../../types/pos';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Pencil, Trash2, Plus } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { Pencil, Trash2, Plus, Upload, Image } from 'lucide-react';
 
 const MenuEditor: React.FC = () => {
   const { state } = usePOS();
   const { products, categories } = state;
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [imageType, setImageType] = useState<'url' | 'upload'>('url');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
     setShowForm(true);
+    setImageType(product.image.startsWith('http') ? 'url' : 'upload');
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // En attendant l'intégration de Supabase pour le stockage des fichiers
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+          const fileInput = document.getElementById('imageUrl') as HTMLInputElement;
+          if (fileInput) {
+            fileInput.value = reader.result;
+          }
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -44,14 +65,14 @@ const MenuEditor: React.FC = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Nom</label>
+                  <Label>Nom</Label>
                   <Input 
                     defaultValue={editingProduct?.name} 
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Prix</label>
+                  <Label>Prix</Label>
                   <Input 
                     type="number" 
                     step="0.01" 
@@ -60,7 +81,7 @@ const MenuEditor: React.FC = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Catégorie</label>
+                  <Label>Catégorie</Label>
                   <select className="w-full p-2 border rounded-md">
                     {categories.map(category => (
                       <option 
@@ -73,23 +94,73 @@ const MenuEditor: React.FC = () => {
                     ))}
                   </select>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Image URL</label>
-                  <Input 
-                    type="url" 
-                    defaultValue={editingProduct?.image}
-                    required
-                  />
+                
+                <div className="space-y-2 col-span-2">
+                  <Label>Image</Label>
+                  <div className="flex gap-2 mb-2">
+                    <Button
+                      type="button"
+                      variant={imageType === 'url' ? 'default' : 'outline'}
+                      onClick={() => setImageType('url')}
+                    >
+                      <Image className="h-4 w-4 mr-2" />
+                      URL Image
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={imageType === 'upload' ? 'default' : 'outline'}
+                      onClick={() => setImageType('upload')}
+                    >
+                      <Upload className="h-4 w-4 mr-2" />
+                      Télécharger Image
+                    </Button>
+                  </div>
+                  
+                  {imageType === 'url' ? (
+                    <Input 
+                      id="imageUrl"
+                      type="url" 
+                      placeholder="https://..."
+                      defaultValue={editingProduct?.image}
+                      required
+                    />
+                  ) : (
+                    <div>
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        accept="image/*"
+                        onChange={handleFileSelect}
+                        className="hidden"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => fileInputRef.current?.click()}
+                      >
+                        <Upload className="h-4 w-4 mr-2" />
+                        Sélectionner un fichier
+                      </Button>
+                      <Input 
+                        id="imageUrl"
+                        type="hidden"
+                        required
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
+
               <div className="space-y-2">
-                <label className="text-sm font-medium">Description</label>
+                <Label>Description</Label>
                 <textarea 
                   className="w-full p-2 border rounded-md" 
                   defaultValue={editingProduct?.description}
                   rows={3}
                 />
               </div>
+
               <div className="flex justify-end space-x-2">
                 <Button 
                   type="button" 

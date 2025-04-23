@@ -120,6 +120,7 @@ export const initialState: POSState = {
     name: 'Deli in the Box',
     address: 'settat, maroc',
     phone: '0695112794',
+    taxId: '',
   },
   currency: 'MAD',
 };
