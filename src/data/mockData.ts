@@ -1,4 +1,3 @@
-
 import { Category, Product, User, POSState } from '../types/pos';
 
 export const categories: Category[] = [
@@ -116,12 +115,11 @@ export const initialState: POSState = {
   users,
   selectedCategory: null,
   currentUser: null,
-  tax: 0, // Changed tax rate to 0 as requested
+  tax: 0,
   businessInfo: {
     name: 'Deli in the Box',
     address: 'settat, maroc',
     phone: '0695112794',
-    taxId: '', // Removed tax ID as requested
   },
   currency: 'MAD',
 };

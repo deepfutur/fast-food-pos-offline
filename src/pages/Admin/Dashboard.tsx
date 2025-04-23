@@ -3,7 +3,7 @@ import { usePOS } from '../../context/POSContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { ArrowLeft, FileText, ShoppingBag, Users, Clock, Settings } from 'lucide-react';
+import { ArrowLeft, FileText, ShoppingBag, Users, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -264,29 +264,12 @@ const AdminDashboard: React.FC = () => {
                             defaultValue={state.businessInfo.address}
                           />
                         </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">Numéro de TVA</label>
-                          <input 
-                            type="text" 
-                            className="w-full p-2 border rounded-md"
-                            defaultValue={state.businessInfo.taxId}
-                          />
-                        </div>
                       </div>
                     </div>
                     
                     <div>
-                      <h3 className="text-lg font-medium mb-2">Paramètres de taxation</h3>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">Taux de TVA (%)</label>
-                          <input 
-                            type="number" 
-                            className="w-full p-2 border rounded-md" 
-                            defaultValue={state.tax * 100}
-                            step="0.1"
-                          />
-                        </div>
+                      <h3 className="text-lg font-medium mb-2">Paramètres de devise</h3>
+                      <div className="grid grid-cols-1 gap-4">
                         <div className="space-y-2">
                           <label className="text-sm font-medium">Devise</label>
                           <Select 
