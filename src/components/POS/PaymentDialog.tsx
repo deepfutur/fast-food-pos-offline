@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
@@ -10,9 +9,10 @@ import { toast } from '@/components/ui/sonner';
 interface PaymentDialogProps {
   isOpen: boolean;
   onClose: () => void;
+  onComplete: (paymentMethod: 'cash' | 'card' | 'voucher', cashReceived?: number) => void;
 }
 
-const PaymentDialog: React.FC<PaymentDialogProps> = ({ isOpen, onClose }) => {
+const PaymentDialog: React.FC<PaymentDialogProps> = ({ isOpen, onClose, onComplete }) => {
   const { getCartSubtotal, getCartTotal, getCartTax, completeOrder, state } = usePOS();
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card' | 'voucher'>('cash');
   const [cashAmount, setCashAmount] = useState('');
@@ -25,8 +25,10 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ isOpen, onClose }) => {
         return;
       }
       completeOrder(paymentMethod, cashReceived);
+      onComplete(paymentMethod, cashReceived);
     } else {
       completeOrder(paymentMethod);
+      onComplete(paymentMethod);
     }
     toast.success("Commande finalisée avec succès!");
     onClose();

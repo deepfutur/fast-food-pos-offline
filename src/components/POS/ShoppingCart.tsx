@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { usePOS } from '../../context/POSContext';
 import { Button } from '@/components/ui/button';
@@ -34,6 +33,22 @@ const ShoppingCart: React.FC = () => {
     
     setCurrentOrder(orderPreview);
     setShowPayment(true);
+  };
+  
+  const handlePaymentComplete = (paymentMethod: 'cash' | 'card' | 'voucher', cashReceived?: number) => {
+    const orderDetails = {
+      items: [...cart],
+      subtotal: getCartSubtotal(),
+      tax: getCartTax(),
+      total: getCartTotal(),
+      paymentMethod: paymentMethod,
+      cashReceived: cashReceived,
+      changeDue: cashReceived ? cashReceived - getCartTotal() : undefined
+    };
+    
+    setCurrentOrder(orderDetails);
+    setShowPayment(false);
+    setShowReceipt(true);
   };
   
   return (
@@ -96,7 +111,8 @@ const ShoppingCart: React.FC = () => {
       
       <PaymentDialog 
         isOpen={showPayment} 
-        onClose={() => setShowPayment(false)} 
+        onClose={() => setShowPayment(false)}
+        onComplete={handlePaymentComplete}
       />
       
       {currentOrder && (
