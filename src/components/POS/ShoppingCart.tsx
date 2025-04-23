@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { usePOS } from '../../context/POSContext';
 import { Button } from '@/components/ui/button';
@@ -44,15 +43,15 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ isOpen, onClose }) => {
         <div className="space-y-4 py-4">
           <div className="flex justify-between text-lg">
             <span>Sous-total:</span>
-            <span>{getCartSubtotal().toFixed(2)} €</span>
+            <span>{getCartSubtotal().toFixed(2)} MAD</span>
           </div>
           <div className="flex justify-between text-lg">
             <span>TVA ({(state.tax * 100).toFixed(0)}%):</span>
-            <span>{getCartTax().toFixed(2)} €</span>
+            <span>{getCartTax().toFixed(2)} MAD</span>
           </div>
           <div className="flex justify-between text-lg font-bold">
             <span>Total:</span>
-            <span>{getCartTotal().toFixed(2)} €</span>
+            <span>{getCartTotal().toFixed(2)} MAD</span>
           </div>
           
           <Separator className="my-4" />
@@ -87,24 +86,12 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ isOpen, onClose }) => {
             </div>
           </div>
           
-          {paymentMethod === 'cash' && (
-            <div className="space-y-2">
-              <div className="font-semibold">Montant reçu</div>
-              <Input 
-                type="number" 
-                value={cashAmount} 
-                onChange={(e) => setCashAmount(e.target.value)} 
-                placeholder="Montant reçu"
-                className="text-xl p-6"
-              />
-              {parseFloat(cashAmount) > 0 && !isNaN(parseFloat(cashAmount)) && (
-                <div className="flex justify-between text-lg">
-                  <span>Monnaie à rendre:</span>
-                  <span className="font-bold">
-                    {Math.max(0, parseFloat(cashAmount) - getCartTotal()).toFixed(2)} €
-                  </span>
-                </div>
-              )}
+          {paymentMethod === 'cash' && parseFloat(cashAmount) > 0 && !isNaN(parseFloat(cashAmount)) && (
+            <div className="flex justify-between text-lg">
+              <span>Monnaie à rendre:</span>
+              <span className="font-bold">
+                {Math.max(0, parseFloat(cashAmount) - getCartTotal()).toFixed(2)} MAD
+              </span>
             </div>
           )}
         </div>
@@ -139,7 +126,6 @@ const ShoppingCart: React.FC = () => {
   };
   
   const handleCompletePurchase = () => {
-    // Préparer les données de prévisualisation avant finalisation
     const orderPreview = {
       items: [...cart],
       subtotal: getCartSubtotal(),
@@ -222,15 +208,15 @@ const ShoppingCart: React.FC = () => {
       <div className="mt-4 pt-4 border-t">
         <div className="flex justify-between mb-1">
           <span>Sous-total:</span>
-          <span>{getCartSubtotal().toFixed(2)} €</span>
+          <span>{getCartSubtotal().toFixed(2)} MAD</span>
         </div>
         <div className="flex justify-between mb-1">
           <span>TVA ({(state.tax * 100).toFixed(0)}%):</span>
-          <span>{getCartTax().toFixed(2)} €</span>
+          <span>{getCartTax().toFixed(2)} MAD</span>
         </div>
         <div className="flex justify-between text-xl font-bold mb-4">
           <span>Total:</span>
-          <span>{getCartTotal().toFixed(2)} €</span>
+          <span>{getCartTotal().toFixed(2)} MAD</span>
         </div>
         
         <Button 
@@ -238,7 +224,7 @@ const ShoppingCart: React.FC = () => {
           disabled={cart.length === 0}
           onClick={handleCompletePurchase}
         >
-          Payer {getCartTotal().toFixed(2)} €
+          Payer {getCartTotal().toFixed(2)} MAD
         </Button>
       </div>
       
