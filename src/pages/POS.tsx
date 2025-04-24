@@ -10,10 +10,10 @@ const POS: React.FC = () => {
   const { state } = usePOS();
   const { products, selectedCategory } = state;
   
-  // Filter products by selected category or show all if no category selected
+  // Sort products by category when no category is selected
   const filteredProducts = selectedCategory
     ? products.filter(product => product.category === selectedCategory)
-    : products;
+    : products.sort((a, b) => a.category.localeCompare(b.category));
   
   return (
     <div className="h-screen flex flex-col">

@@ -14,22 +14,7 @@ export const categories: Category[] = [
 ];
 
 export const products: Product[] = [
-  {
-    id: 'menu-1',
-    name: 'Menu Classic Burger',
-    price: 10.50,
-    category: 'menus',
-    image: 'https://images.unsplash.com/photo-1561758033-d89a9ad46330?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
-    description: 'Classic Burger + Frites + Boisson'
-  },
-  {
-    id: 'menu-2',
-    name: 'Menu Cheese Burger',
-    price: 11.50,
-    category: 'menus',
-    image: 'https://images.unsplash.com/photo-1610970881699-44a5587144e6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
-    description: 'Cheese Burger + Frites + Boisson'
-  },
+  // Drinks
   {
     id: 'drink-orange',
     name: 'Jus d\'orange',
@@ -126,6 +111,8 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1523362628745-0c100150b504?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
     description: 'Eau minérale'
   },
+
+  // Salads
   {
     id: 'salade-royale',
     name: 'Salade royale',
@@ -158,6 +145,8 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1478369402113-1fd53f17e8b4?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
     description: 'Salade de fruits frais de saison'
   },
+
+  // Pasticcio
   {
     id: 'pasticcio-viande',
     name: 'Pasticcio viande hachée',
@@ -190,6 +179,8 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1473093226795-af9932fe5856?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
     description: 'Pasticcio aux fruits de mer'
   },
+
+  // Sandwiches
   {
     id: 'sandwich-thon',
     name: 'Sandwich thon',
@@ -246,6 +237,8 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
     description: 'Notre sandwich spécial maison'
   },
+
+  // Burgers
   {
     id: 'burger-cheese',
     name: 'Cheese burger',
@@ -278,6 +271,8 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1553979459-d2229ba7433b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
     description: 'Burger spécial Goku'
   },
+
+  // Pasta
   {
     id: 'pasta-bolognaise',
     name: 'Spaghetti bolognaise',
@@ -310,6 +305,8 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
     description: 'Spaghetti aux fruits de mer'
   },
+
+  // Dishes
   {
     id: 'plat-brochettes',
     name: 'Plat brochettes de poulet',
