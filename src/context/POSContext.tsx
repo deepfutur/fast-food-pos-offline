@@ -1,5 +1,6 @@
+
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-import { CartItem, POSState, Product } from '../types/pos';
+import { CartItem, POSState, Product, User } from '../types/pos';
 import { initialState } from '../data/mockData';
 
 type POSAction = 
@@ -14,7 +15,9 @@ type POSAction =
   | { type: 'ADD_PRODUCT'; payload: Product }
   | { type: 'UPDATE_PRODUCT'; payload: Product }
   | { type: 'DELETE_PRODUCT'; payload: string }
-  | { type: 'UPDATE_USER_PIN'; payload: { userId: string; newPin: string } };
+  | { type: 'UPDATE_USER_PIN'; payload: { userId: string; newPin: string } }
+  | { type: 'ADD_USER'; payload: User }
+  | { type: 'UPDATE_SETTINGS'; payload: { businessInfo: POSState['businessInfo']; tax: number; currency: POSState['currency'] } };
 
 interface POSContextType {
   state: POSState;
@@ -30,6 +33,7 @@ interface POSContextType {
   getCartSubtotal: () => number;
   getCartTax: () => number;
   updateUserPin: (userId: string, newPin: string) => boolean;
+  addUser: (user: User) => boolean;
 }
 
 const POSContext = createContext<POSContextType | undefined>(undefined);
@@ -246,6 +250,40 @@ const posReducer = (state: POSState, action: POSAction): POSState => {
       return newState;
     }
     
+    case 'ADD_USER': {
+      const newUser = action.payload;
+      
+      if (!state.currentUser || state.currentUser.role !== 'admin') {
+        return state;
+      }
+      
+      newState = {
+        ...state,
+        users: [...state.users, newUser]
+      };
+      
+      saveToLocalStorage(newState);
+      return newState;
+    }
+    
+    case 'UPDATE_SETTINGS': {
+      const { businessInfo, tax, currency } = action.payload;
+      
+      if (!state.currentUser || state.currentUser.role !== 'admin') {
+        return state;
+      }
+      
+      newState = {
+        ...state,
+        businessInfo,
+        tax,
+        currency
+      };
+      
+      saveToLocalStorage(newState);
+      return newState;
+    }
+    
     default:
       return state;
   }
@@ -310,6 +348,11 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     return true;
   };
   
+  const addUser = (user: User): boolean => {
+    dispatch({ type: 'ADD_USER', payload: user });
+    return true;
+  };
+  
   return (
     <POSContext.Provider value={{ 
       state, 
@@ -324,7 +367,8 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       getCartTotal,
       getCartSubtotal,
       getCartTax,
-      updateUserPin
+      updateUserPin,
+      addUser
     }}>
       {children}
     </POSContext.Provider>

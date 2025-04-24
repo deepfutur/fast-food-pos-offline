@@ -1,9 +1,14 @@
+
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { FileText, ShoppingBag, Users, Settings } from 'lucide-react';
 import MenuEditor from '@/components/Admin/MenuEditor';
 import UpdatePinForm from '@/components/Admin/UpdatePinForm';
+import OrderHistory from '@/components/Admin/OrderHistory';
+import SalesStatistics from '@/components/Admin/SalesStatistics';
+import AppSettings from '@/components/Admin/AppSettings';
+import UserManager from '@/components/Admin/UserManager';
 import Header from '@/components/Layout/Header';
 
 const Dashboard: React.FC = () => {
@@ -13,7 +18,7 @@ const Dashboard: React.FC = () => {
       
       <div className="container mx-auto p-4">
         <Tabs defaultValue="orders">
-          <TabsList>
+          <TabsList className="mb-6">
             <TabsTrigger value="orders">
               <FileText className="h-4 w-4 mr-2" />
               Commandes
@@ -39,7 +44,7 @@ const Dashboard: React.FC = () => {
           <TabsContent value="orders">
             <Card>
               <CardContent className="p-6">
-                Commandes en attente et historiques iront ici.
+                <OrderHistory />
               </CardContent>
             </Card>
           </TabsContent>
@@ -47,7 +52,7 @@ const Dashboard: React.FC = () => {
           <TabsContent value="sales">
             <Card>
               <CardContent className="p-6">
-                Statistiques des ventes et rapports iront ici.
+                <SalesStatistics />
               </CardContent>
             </Card>
           </TabsContent>
@@ -63,14 +68,10 @@ const Dashboard: React.FC = () => {
           <TabsContent value="users">
             <Card>
               <CardContent className="p-6 space-y-6">
-                <div>
+                <UserManager />
+                <div className="border-t pt-6">
                   <h3 className="text-lg font-semibold mb-4">Changer le code PIN</h3>
                   <UpdatePinForm />
-                </div>
-                <div className="mt-6">
-                  <p className="text-sm text-gray-500">
-                    Le code PIN doit contenir exactement 4 chiffres.
-                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -79,7 +80,7 @@ const Dashboard: React.FC = () => {
           <TabsContent value="settings">
             <Card>
               <CardContent className="p-6">
-                Paramètres de l'application (taxes, informations commerciales, etc.) iront ici.
+                <AppSettings />
               </CardContent>
             </Card>
           </TabsContent>
