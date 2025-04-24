@@ -14,6 +14,7 @@ export const categories: Category[] = [
 ];
 
 export const products: Product[] = [
+  // Removing sandwich poulet and old cheese burger
   {
     id: 'burger-1',
     name: 'Classic Burger',
@@ -45,14 +46,6 @@ export const products: Product[] = [
     category: 'menus',
     image: 'https://images.unsplash.com/photo-1610970881699-44a5587144e6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
     description: 'Cheese Burger + Frites + Boisson'
-  },
-  {
-    id: 'sandwich-1',
-    name: 'Sandwich Poulet',
-    price: 5.50,
-    category: 'sandwiches',
-    image: 'https://images.unsplash.com/photo-1528736235302-52922df5c122?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
-    description: 'Pain, poulet, salade, tomate, sauce maison'
   },
   {
     id: 'drink-orange',
