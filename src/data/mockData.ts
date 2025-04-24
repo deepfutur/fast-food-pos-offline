@@ -252,7 +252,7 @@ export const products: Product[] = [
     name: 'Chicken burger',
     price: 27.00,
     category: 'burgers',
-    image: 'https://images.unsplash.com/photo-1615297319154-8fb9e6c0b6fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    image: 'https://images.unsplash.com/photo-1614790141165-d5162806ecd8?auto=format&fit=crop&w=500&h=500&q=80',
     description: 'Burger au poulet'
   },
   {
