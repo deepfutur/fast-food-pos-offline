@@ -14,23 +14,6 @@ export const categories: Category[] = [
 ];
 
 export const products: Product[] = [
-  // Removing sandwich poulet and old cheese burger
-  {
-    id: 'burger-1',
-    name: 'Classic Burger',
-    price: 6.50,
-    category: 'burgers',
-    image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
-    description: 'Steak haché, salade, tomate, oignon, sauce maison'
-  },
-  {
-    id: 'burger-2',
-    name: 'Cheese Burger',
-    price: 7.50,
-    category: 'burgers',
-    image: 'https://images.unsplash.com/photo-1565299507177-b0ac66763828?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
-    description: 'Steak haché, fromage, salade, tomate, oignon, sauce maison'
-  },
   {
     id: 'menu-1',
     name: 'Menu Classic Burger',
@@ -124,7 +107,7 @@ export const products: Product[] = [
     name: 'Jus zaazaa',
     price: 25.00,
     category: 'drinks',
-    image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    image: 'https://images.unsplash.com/photo-1514362545857-3bc16c42047b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
     description: 'Notre spécialité Zaazaa'
   },
   {
