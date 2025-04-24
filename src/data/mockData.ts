@@ -5,8 +5,12 @@ export const categories: Category[] = [
   { id: 'burgers', name: 'Burgers' },
   { id: 'menus', name: 'Menus' },
   { id: 'drinks', name: 'Boissons' },
-  { id: 'desserts', name: 'Desserts' },
-  { id: 'sides', name: 'Accompagnements' }
+  { id: 'tacos', name: 'Tacos' },
+  { id: 'pizza', name: 'Pizza' },
+  { id: 'salads', name: 'Salade' },
+  { id: 'pasticcio', name: 'Pasticcio' },
+  { id: 'pasta', name: 'Pasta' },
+  { id: 'dishes', name: 'Plats' }
 ];
 
 export const products: Product[] = [
@@ -51,44 +55,100 @@ export const products: Product[] = [
     description: 'Pain, poulet, salade, tomate, sauce maison'
   },
   {
-    id: 'drink-1',
-    name: 'Coca-Cola',
-    price: 2.00,
+    id: 'drink-orange',
+    name: 'Jus d\'orange',
+    price: 12.00,
+    category: 'drinks',
+    image: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    description: 'Jus d\'orange frais'
+  },
+  {
+    id: 'drink-beetroot',
+    name: 'Jus de betterave',
+    price: 12.00,
+    category: 'drinks',
+    image: 'https://images.unsplash.com/photo-1594312180721-3b5217cfc65f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    description: 'Jus de betterave frais'
+  },
+  {
+    id: 'drink-apple',
+    name: 'Jus de pommes',
+    price: 15.00,
+    category: 'drinks',
+    image: 'https://images.unsplash.com/photo-1620837953295-3328afb074f2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    description: 'Jus de pommes frais'
+  },
+  {
+    id: 'drink-pineapple',
+    name: 'Jus d\'ananas',
+    price: 20.00,
+    category: 'drinks',
+    image: 'https://images.unsplash.com/photo-1587736661445-d96c39068824?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    description: 'Jus d\'ananas frais'
+  },
+  {
+    id: 'drink-strawberry',
+    name: 'Jus de fraise',
+    price: 20.00,
+    category: 'drinks',
+    image: 'https://images.unsplash.com/photo-1508254627334-d4fa3b3b8178?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    description: 'Jus de fraise frais'
+  },
+  {
+    id: 'drink-mango',
+    name: 'Jus de mangue',
+    price: 20.00,
+    category: 'drinks',
+    image: 'https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    description: 'Jus de mangue frais'
+  },
+  {
+    id: 'drink-royal',
+    name: 'Jus royale',
+    price: 25.00,
+    category: 'drinks',
+    image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    description: 'Notre mélange spécial de fruits'
+  },
+  {
+    id: 'drink-banana',
+    name: 'Jus de banane',
+    price: 15.00,
+    category: 'drinks',
+    image: 'https://images.unsplash.com/photo-1557409518-691ebcd96038?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    description: 'Jus de banane frais'
+  },
+  {
+    id: 'drink-lemon',
+    name: 'Jus de citron',
+    price: 12.00,
+    category: 'drinks',
+    image: 'https://images.unsplash.com/photo-1444952483853-7c36e902e722?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    description: 'Citronnade fraîche'
+  },
+  {
+    id: 'drink-zaazaa',
+    name: 'Jus zaazaa',
+    price: 25.00,
+    category: 'drinks',
+    image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    description: 'Notre spécialité Zaazaa'
+  },
+  {
+    id: 'drink-soda',
+    name: 'Soda',
+    price: 6.00,
     category: 'drinks',
     image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
-    description: 'Coca-Cola 33cl'
+    description: 'Soda au choix'
   },
   {
-    id: 'drink-2',
-    name: 'Eau minérale',
-    price: 1.50,
+    id: 'drink-water',
+    name: 'Bouteille d\'eau',
+    price: 4.00,
     category: 'drinks',
     image: 'https://images.unsplash.com/photo-1523362628745-0c100150b504?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
-    description: 'Eau minérale 50cl'
-  },
-  {
-    id: 'dessert-1',
-    name: 'Brownie',
-    price: 3.50,
-    category: 'desserts',
-    image: 'https://images.unsplash.com/photo-1564355808539-22fda35bed7e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
-    description: 'Brownie au chocolat'
-  },
-  {
-    id: 'dessert-2',
-    name: 'Tiramisu',
-    price: 4.00,
-    category: 'desserts',
-    image: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
-    description: 'Tiramisu maison'
-  },
-  {
-    id: 'side-1',
-    name: 'Frites',
-    price: 3.00,
-    category: 'sides',
-    image: 'https://images.unsplash.com/photo-1576107232684-1279f390859f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
-    description: 'Portion de frites'
+    description: 'Eau minérale'
   }
 ];
 
