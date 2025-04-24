@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { FileText, ShoppingBag, Users, Settings } from 'lucide-react';
 import MenuEditor from '@/components/Admin/MenuEditor';
+import UpdatePinForm from '@/components/Admin/UpdatePinForm';
 import Header from '@/components/Layout/Header';
 
 const Dashboard: React.FC = () => {
@@ -61,8 +62,16 @@ const Dashboard: React.FC = () => {
 
           <TabsContent value="users">
             <Card>
-              <CardContent className="p-6">
-                Gestion des utilisateurs (ajouter, modifier, supprimer) ira ici.
+              <CardContent className="p-6 space-y-6">
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">Changer le code PIN</h3>
+                  <UpdatePinForm />
+                </div>
+                <div className="mt-6">
+                  <p className="text-sm text-gray-500">
+                    Le code PIN doit contenir exactement 4 chiffres.
+                  </p>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>

@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import { CartItem, POSState, Product } from '../types/pos';
 import { initialState } from '../data/mockData';
@@ -14,7 +13,8 @@ type POSAction =
   | { type: 'LOGOUT' }
   | { type: 'ADD_PRODUCT'; payload: Product }
   | { type: 'UPDATE_PRODUCT'; payload: Product }
-  | { type: 'DELETE_PRODUCT'; payload: string };
+  | { type: 'DELETE_PRODUCT'; payload: string }
+  | { type: 'UPDATE_USER_PIN'; payload: { userId: string; newPin: string } };
 
 interface POSContextType {
   state: POSState;
@@ -29,11 +29,11 @@ interface POSContextType {
   getCartTotal: () => number;
   getCartSubtotal: () => number;
   getCartTax: () => number;
+  updateUserPin: (userId: string, newPin: string) => boolean;
 }
 
 const POSContext = createContext<POSContextType | undefined>(undefined);
 
-// Sauvegarde les données modifiées dans le localStorage
 const saveToLocalStorage = (state: POSState) => {
   try {
     localStorage.setItem('pos_products', JSON.stringify(state.products));
@@ -46,7 +46,6 @@ const saveToLocalStorage = (state: POSState) => {
   }
 };
 
-// Charge les données depuis le localStorage au démarrage
 const loadFromLocalStorage = (): Partial<POSState> => {
   try {
     const products = localStorage.getItem('pos_products');
@@ -68,7 +67,6 @@ const loadFromLocalStorage = (): Partial<POSState> => {
   }
 };
 
-// Initialise l'état avec les données du localStorage ou les valeurs par défaut
 const initialStateWithLocalStorage = {
   ...initialState,
   ...loadFromLocalStorage()
@@ -84,11 +82,9 @@ const posReducer = (state: POSState, action: POSAction): POSState => {
     case 'ADD_TO_CART': {
       const product = action.payload;
       
-      // Check if product already exists in cart
       const existingItem = state.cart.find(item => item.productId === product.id);
       
       if (existingItem) {
-        // Update quantity if product already in cart
         return {
           ...state,
           cart: state.cart.map(item => 
@@ -98,7 +94,6 @@ const posReducer = (state: POSState, action: POSAction): POSState => {
           )
         };
       } else {
-        // Add new item to cart
         const newItem: CartItem = {
           id: Date.now().toString(),
           productId: product.id,
@@ -230,7 +225,27 @@ const posReducer = (state: POSState, action: POSAction): POSState => {
       saveToLocalStorage(newState);
       return newState;
     }
+    
+    case 'UPDATE_USER_PIN': {
+      const { userId, newPin } = action.payload;
       
+      if (!state.currentUser || state.currentUser.role !== 'admin') {
+        return state;
+      }
+      
+      newState = {
+        ...state,
+        users: state.users.map(user => 
+          user.id === userId 
+            ? { ...user, pin: newPin }
+            : user
+        )
+      };
+      
+      saveToLocalStorage(newState);
+      return newState;
+    }
+    
     default:
       return state;
   }
@@ -286,6 +301,15 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     return getCartSubtotal() + getCartTax();
   };
   
+  const updateUserPin = (userId: string, newPin: string): boolean => {
+    if (!/^\d{4}$/.test(newPin)) {
+      return false;
+    }
+    
+    dispatch({ type: 'UPDATE_USER_PIN', payload: { userId, newPin } });
+    return true;
+  };
+  
   return (
     <POSContext.Provider value={{ 
       state, 
@@ -299,7 +323,8 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       logout,
       getCartTotal,
       getCartSubtotal,
-      getCartTax
+      getCartTax,
+      updateUserPin
     }}>
       {children}
     </POSContext.Provider>
