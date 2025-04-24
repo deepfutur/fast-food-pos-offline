@@ -7,32 +7,54 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Pencil, Trash2, Plus, Upload, Image } from 'lucide-react';
+import { toast } from "@/components/ui/use-toast";
 
 const MenuEditor: React.FC = () => {
-  const { state } = usePOS();
+  const { state, dispatch } = usePOS();
   const { products, categories } = state;
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [imageType, setImageType] = useState<'url' | 'upload'>('url');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [formValues, setFormValues] = useState({
+    name: '',
+    price: '',
+    category: '',
+    image: '',
+    description: ''
+  });
 
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
+    setFormValues({
+      name: product.name,
+      price: product.price.toString(),
+      category: product.category,
+      image: product.image,
+      description: product.description || ''
+    });
     setShowForm(true);
     setImageType(product.image.startsWith('http') ? 'url' : 'upload');
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { id, value } = e.target;
+    setFormValues({
+      ...formValues,
+      [id]: value
+    });
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // En attendant l'intégration de Supabase pour le stockage des fichiers
       const reader = new FileReader();
       reader.onloadend = () => {
         if (typeof reader.result === 'string') {
-          const fileInput = document.getElementById('imageUrl') as HTMLInputElement;
-          if (fileInput) {
-            fileInput.value = reader.result;
-          }
+          setFormValues({
+            ...formValues,
+            image: reader.result
+          });
         }
       };
       reader.readAsDataURL(file);
@@ -41,9 +63,64 @@ const MenuEditor: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Cette fonctionnalité nécessite Supabase pour persister les modifications
+    
+    // Créer un objet product avec les valeurs du formulaire
+    const updatedProduct: Product = {
+      id: editingProduct ? editingProduct.id : `product-${Date.now()}`,
+      name: formValues.name,
+      price: parseFloat(formValues.price),
+      category: formValues.category,
+      image: formValues.image,
+      description: formValues.description
+    };
+
+    // Dispatch action pour mettre à jour ou ajouter le produit
+    if (editingProduct) {
+      dispatch({ type: 'UPDATE_PRODUCT', payload: updatedProduct });
+      toast({
+        title: "Produit mis à jour",
+        description: `Le produit ${updatedProduct.name} a été mis à jour avec succès.`,
+      });
+    } else {
+      dispatch({ type: 'ADD_PRODUCT', payload: updatedProduct });
+      toast({
+        title: "Produit ajouté",
+        description: `Le produit ${updatedProduct.name} a été ajouté avec succès.`,
+      });
+    }
+    
     setShowForm(false);
     setEditingProduct(null);
+    setFormValues({
+      name: '',
+      price: '',
+      category: '',
+      image: '',
+      description: ''
+    });
+  };
+
+  const handleDeleteProduct = (productId: string) => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
+      dispatch({ type: 'DELETE_PRODUCT', payload: productId });
+      toast({
+        title: "Produit supprimé",
+        description: "Le produit a été supprimé avec succès.",
+      });
+    }
+  };
+
+  const handleNewProduct = () => {
+    setEditingProduct(null);
+    setFormValues({
+      name: '',
+      price: '',
+      category: categories[0]?.id || '',
+      image: '',
+      description: ''
+    });
+    setShowForm(true);
+    setImageType('url');
   };
 
   return (
@@ -51,7 +128,7 @@ const MenuEditor: React.FC = () => {
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Gestion du Menu</h2>
         <Button 
-          onClick={() => setShowForm(true)}
+          onClick={handleNewProduct}
           className="bg-pos-primary hover:bg-pos-primary/90"
         >
           <Plus className="h-4 w-4 mr-2" />
@@ -65,29 +142,38 @@ const MenuEditor: React.FC = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Nom</Label>
+                  <Label htmlFor="name">Nom</Label>
                   <Input 
-                    defaultValue={editingProduct?.name} 
+                    id="name"
+                    value={formValues.name} 
+                    onChange={handleInputChange}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Prix</Label>
+                  <Label htmlFor="price">Prix</Label>
                   <Input 
+                    id="price"
                     type="number" 
                     step="0.01" 
-                    defaultValue={editingProduct?.price}
+                    value={formValues.price}
+                    onChange={handleInputChange}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Catégorie</Label>
-                  <select className="w-full p-2 border rounded-md">
+                  <Label htmlFor="category">Catégorie</Label>
+                  <select 
+                    id="category" 
+                    className="w-full p-2 border rounded-md"
+                    value={formValues.category}
+                    onChange={handleInputChange}
+                    required
+                  >
                     {categories.map(category => (
                       <option 
                         key={category.id} 
                         value={category.id}
-                        selected={editingProduct?.category === category.id}
                       >
                         {category.name}
                       </option>
@@ -118,14 +204,15 @@ const MenuEditor: React.FC = () => {
                   
                   {imageType === 'url' ? (
                     <Input 
-                      id="imageUrl"
+                      id="image"
                       type="url" 
                       placeholder="https://..."
-                      defaultValue={editingProduct?.image}
+                      value={formValues.image}
+                      onChange={handleInputChange}
                       required
                     />
                   ) : (
-                    <div>
+                    <div className="space-y-2">
                       <input
                         type="file"
                         ref={fileInputRef}
@@ -142,21 +229,27 @@ const MenuEditor: React.FC = () => {
                         <Upload className="h-4 w-4 mr-2" />
                         Sélectionner un fichier
                       </Button>
-                      <Input 
-                        id="imageUrl"
-                        type="hidden"
-                        required
-                      />
+                      {formValues.image && (
+                        <div className="mt-2 border rounded-md overflow-hidden">
+                          <img 
+                            src={formValues.image} 
+                            alt="Prévisualisation" 
+                            className="w-full h-32 object-cover"
+                          />
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label>Description</Label>
+                <Label htmlFor="description">Description</Label>
                 <textarea 
+                  id="description"
                   className="w-full p-2 border rounded-md" 
-                  defaultValue={editingProduct?.description}
+                  value={formValues.description}
+                  onChange={handleInputChange}
                   rows={3}
                 />
               </div>
@@ -207,6 +300,7 @@ const MenuEditor: React.FC = () => {
                   variant="outline" 
                   size="sm"
                   className="text-red-500 hover:text-red-700"
+                  onClick={() => handleDeleteProduct(product.id)}
                 >
                   <Trash2 className="h-4 w-4 mr-1" />
                   Supprimer

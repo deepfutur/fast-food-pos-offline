@@ -11,7 +11,10 @@ type POSAction =
   | { type: 'CLEAR_CART' }
   | { type: 'COMPLETE_ORDER'; payload: { paymentMethod: 'cash' | 'card' | 'voucher'; cashReceived?: number } }
   | { type: 'LOGIN'; payload: { pin: string } }
-  | { type: 'LOGOUT' };
+  | { type: 'LOGOUT' }
+  | { type: 'ADD_PRODUCT'; payload: Product }
+  | { type: 'UPDATE_PRODUCT'; payload: Product }
+  | { type: 'DELETE_PRODUCT'; payload: string };
 
 interface POSContextType {
   state: POSState;
@@ -30,7 +33,50 @@ interface POSContextType {
 
 const POSContext = createContext<POSContextType | undefined>(undefined);
 
+// Sauvegarde les données modifiées dans le localStorage
+const saveToLocalStorage = (state: POSState) => {
+  try {
+    localStorage.setItem('pos_products', JSON.stringify(state.products));
+    localStorage.setItem('pos_categories', JSON.stringify(state.categories));
+    localStorage.setItem('pos_users', JSON.stringify(state.users));
+    localStorage.setItem('pos_orders', JSON.stringify(state.orders));
+    localStorage.setItem('pos_businessInfo', JSON.stringify(state.businessInfo));
+  } catch (error) {
+    console.error("Erreur lors de la sauvegarde dans localStorage:", error);
+  }
+};
+
+// Charge les données depuis le localStorage au démarrage
+const loadFromLocalStorage = (): Partial<POSState> => {
+  try {
+    const products = localStorage.getItem('pos_products');
+    const categories = localStorage.getItem('pos_categories');
+    const users = localStorage.getItem('pos_users');
+    const orders = localStorage.getItem('pos_orders');
+    const businessInfo = localStorage.getItem('pos_businessInfo');
+    
+    return {
+      products: products ? JSON.parse(products) : initialState.products,
+      categories: categories ? JSON.parse(categories) : initialState.categories,
+      users: users ? JSON.parse(users) : initialState.users,
+      orders: orders ? JSON.parse(orders) : initialState.orders,
+      businessInfo: businessInfo ? JSON.parse(businessInfo) : initialState.businessInfo,
+    };
+  } catch (error) {
+    console.error("Erreur lors du chargement depuis localStorage:", error);
+    return {};
+  }
+};
+
+// Initialise l'état avec les données du localStorage ou les valeurs par défaut
+const initialStateWithLocalStorage = {
+  ...initialState,
+  ...loadFromLocalStorage()
+};
+
 const posReducer = (state: POSState, action: POSAction): POSState => {
+  let newState: POSState;
+  
   switch (action.type) {
     case 'SET_CATEGORY':
       return { ...state, selectedCategory: action.payload };
@@ -119,11 +165,14 @@ const posReducer = (state: POSState, action: POSAction): POSState => {
         cashierId: state.currentUser.id
       };
       
-      return {
+      newState = {
         ...state,
         orders: [newOrder, ...state.orders],
         cart: []
       };
+      
+      saveToLocalStorage(newState);
+      return newState;
     }
     
     case 'LOGIN': {
@@ -146,6 +195,41 @@ const posReducer = (state: POSState, action: POSAction): POSState => {
         currentUser: null,
         cart: []
       };
+    
+    case 'ADD_PRODUCT': {
+      const newProduct = action.payload;
+      newState = {
+        ...state,
+        products: [...state.products, newProduct]
+      };
+      
+      saveToLocalStorage(newState);
+      return newState;
+    }
+    
+    case 'UPDATE_PRODUCT': {
+      const updatedProduct = action.payload;
+      newState = {
+        ...state,
+        products: state.products.map(product =>
+          product.id === updatedProduct.id ? updatedProduct : product
+        )
+      };
+      
+      saveToLocalStorage(newState);
+      return newState;
+    }
+    
+    case 'DELETE_PRODUCT': {
+      const productId = action.payload;
+      newState = {
+        ...state,
+        products: state.products.filter(product => product.id !== productId)
+      };
+      
+      saveToLocalStorage(newState);
+      return newState;
+    }
       
     default:
       return state;
@@ -153,7 +237,7 @@ const posReducer = (state: POSState, action: POSAction): POSState => {
 };
 
 export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [state, dispatch] = useReducer(posReducer, initialState);
+  const [state, dispatch] = useReducer(posReducer, initialStateWithLocalStorage);
   
   const addToCart = (product: Product) => {
     dispatch({ type: 'ADD_TO_CART', payload: product });
