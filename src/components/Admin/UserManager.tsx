@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { usePOS } from '@/context/POSContext';
 import { Button } from '@/components/ui/button';
@@ -137,9 +136,7 @@ const UserManager: React.FC = () => {
           {state.users.map(user => (
             <TableRow key={user.id}>
               <TableCell className="font-medium">{user.name}</TableCell>
-              <TableCell>
-                {user.role === 'admin' ? 'Administrateur' : 'Caissier'}
-              </TableCell>
+              <TableCell>{user.role === 'admin' ? 'Administrateur' : 'Caissier'}</TableCell>
             </TableRow>
           ))}
         </TableBody>

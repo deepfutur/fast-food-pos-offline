@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import { CartItem, POSState, Product, User } from '../types/pos';
 import { initialState } from '../data/mockData';
@@ -73,7 +72,27 @@ const loadFromLocalStorage = (): Partial<POSState> => {
 
 const initialStateWithLocalStorage = {
   ...initialState,
-  ...loadFromLocalStorage()
+  ...loadFromLocalStorage(),
+  users: [
+    {
+      id: 'admin-1',
+      name: 'Admin',
+      pin: '2387',
+      role: 'admin' as const
+    },
+    {
+      id: 'cashier-1',
+      name: 'Caissier 1',
+      pin: '9876',
+      role: 'cashier' as const
+    },
+    {
+      id: 'cashier-2',
+      name: 'Caissier 2',
+      pin: '5432',
+      role: 'cashier' as const
+    }
+  ]
 };
 
 const posReducer = (state: POSState, action: POSAction): POSState => {

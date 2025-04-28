@@ -4,9 +4,38 @@ import { usePOS } from '@/context/POSContext';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { Button } from '@/components/ui/button';
+import { FileDown } from 'lucide-react';
+import { toast } from '@/components/ui/sonner';
 
 const OrderHistory: React.FC = () => {
   const { state } = usePOS();
+  
+  const downloadHistory = () => {
+    try {
+      const orders = state.orders.map(order => ({
+        id: order.id,
+        date: format(order.timestamp, 'dd/MM/yyyy HH:mm'),
+        items: order.items.reduce((acc, item) => acc + item.quantity, 0),
+        total: `${order.total.toFixed(2)} ${state.currency}`,
+        payment: order.paymentMethod === 'cash' ? 'Espèces' : order.paymentMethod === 'card' ? 'Carte' : 'Bon'
+      }));
+
+      const csvContent = [
+        ['ID', 'Date', 'Articles', 'Total', 'Paiement'],
+        ...orders.map(o => [o.id, o.date, o.items, o.total, o.payment])
+      ].map(row => row.join(',')).join('\n');
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `historique_commandes_${format(new Date(), 'dd-MM-yyyy')}.csv`;
+      link.click();
+      toast.success('Historique téléchargé avec succès');
+    } catch (error) {
+      toast.error('Erreur lors du téléchargement');
+    }
+  };
   
   if (state.orders.length === 0) {
     return <p className="text-center py-8">Aucune commande trouvée.</p>;
@@ -14,7 +43,14 @@ const OrderHistory: React.FC = () => {
   
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Historique des commandes</h3>
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold">Historique des commandes</h3>
+        <Button onClick={downloadHistory} variant="outline" className="gap-2">
+          <FileDown className="h-5 w-5" />
+          Télécharger
+        </Button>
+      </div>
+      
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
