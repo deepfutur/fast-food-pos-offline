@@ -1,14 +1,26 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { LogOut, Settings } from 'lucide-react';
+import { LogOut, UserCog } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { usePOS } from '@/context/POSContext';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { toast } from '@/components/ui/sonner';
 
 const Header: React.FC = () => {
-  const { state, logout } = usePOS();
+  const { state, logout, login } = usePOS();
   const { currentUser } = state;
   const navigate = useNavigate();
+  
+  const handleUserChange = (pin: string) => {
+    const success = login(pin);
+    if (success) {
+      toast.success("Utilisateur changé avec succès");
+    } else {
+      toast.error("Code PIN invalide");
+    }
+  };
   
   const toggleInterface = () => {
     if (window.location.pathname === '/admin') {
@@ -42,6 +54,36 @@ const Header: React.FC = () => {
               {currentUser?.role === 'admin' ? 'Admin' : 'Caissier'}
             </span>
           </div>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="text-pos-light hover:text-white hover:bg-pos-primary"
+              >
+                <UserCog className="h-5 w-5" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Changer d'utilisateur</DialogTitle>
+              </DialogHeader>
+              <div className="py-4">
+                <Select onValueChange={handleUserChange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner un utilisateur" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {state.users.map(user => (
+                      <SelectItem key={user.id} value={user.pin}>
+                        {user.name} ({user.role === 'admin' ? 'Admin' : 'Caissier'})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </DialogContent>
+          </Dialog>
           <Button 
             variant="ghost" 
             size="icon"
