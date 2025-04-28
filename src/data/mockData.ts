@@ -14,6 +14,131 @@ export const categories: Category[] = [
 ];
 
 export const products: Product[] = [
+  // Pizza
+  {
+    id: 'pizza-margherita',
+    name: 'Pizza Margherita',
+    price: 30.00,
+    category: 'pizza',
+    description: 'Sauce tomate, mozzarella',
+    image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+  },
+  {
+    id: 'pizza-thon',
+    name: 'Pizza Thon',
+    price: 40.00,
+    category: 'pizza',
+    description: 'Sauce tomate, thon, oignon, mozzarella',
+    image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+  },
+  {
+    id: 'pizza-poulet',
+    name: 'Pizza Poulet',
+    price: 45.00,
+    category: 'pizza',
+    description: 'Sauce tomate, thon, oignon, mozzarella',
+    image: 'https://images.unsplash.com/photo-1565299585577-e4e457c61baa?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+  },
+  {
+    id: 'pizza-viande',
+    name: 'Pizza Viande Hachée',
+    price: 50.00,
+    category: 'pizza',
+    description: 'Sauce tomate, viande hachée, mozzarella',
+    image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+  },
+  {
+    id: 'pizza-4-saisons',
+    name: 'Pizza 4 Saisons',
+    price: 55.00,
+    category: 'pizza',
+    description: 'Sauce tomate, viande hachée, thon, poulet, charcuterie, mozzarella',
+    image: 'https://images.unsplash.com/photo-1594007654729-407eedc4be65?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+  },
+  {
+    id: 'pizza-4-fromages',
+    name: 'Pizza 4 Fromages',
+    price: 40.00,
+    category: 'pizza',
+    description: 'Sauce tomate, edam cheese, mozzarella, gouda, parmesan',
+    image: 'https://images.unsplash.com/photo-1528137871618-79d2761e3fd5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+  },
+  {
+    id: 'pizza-pepperoni',
+    name: 'Pizza Pepperoni',
+    price: 45.00,
+    category: 'pizza',
+    description: 'Sauce tomate, pepperoni, mozzarella',
+    image: 'https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+  },
+  {
+    id: 'pizza-fruits-mer',
+    name: 'Pizza Fruits de Mer',
+    price: 60.00,
+    category: 'pizza',
+    description: 'Sauce tomate, fruits de mer, mozzarella',
+    image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+  },
+  {
+    id: 'pizza-deli',
+    name: 'Pizza Deli in the Box',
+    price: 60.00,
+    category: 'pizza',
+    description: 'Sauce tomate, pepperoni, viande hachée, mozzarella',
+    image: 'https://images.unsplash.com/photo-1571066811602-716837d681de?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+  },
+  
+  // Tacos
+  {
+    id: 'tacos-poulet',
+    name: 'Tacos Poulet',
+    price: 35.00,
+    category: 'tacos',
+    image: 'https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+  },
+  {
+    id: 'tacos-viande',
+    name: 'Tacos Viande Hachée',
+    price: 35.00,
+    category: 'tacos',
+    image: 'https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+  },
+  {
+    id: 'tacos-mixte',
+    name: 'Tacos Mixte',
+    price: 35.00,
+    category: 'tacos',
+    image: 'https://images.unsplash.com/photo-1611699363898-67bcb21400e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+  },
+  {
+    id: 'tacos-saucisse',
+    name: 'Tacos Saucisse',
+    price: 35.00,
+    category: 'tacos',
+    image: 'https://images.unsplash.com/photo-1619216083420-6e54b1f0b683?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+  },
+  {
+    id: 'tacos-nuggets',
+    name: 'Tacos Nuggets',
+    price: 40.00,
+    category: 'tacos',
+    image: 'https://images.unsplash.com/photo-1626700051175-6818013e0d4d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+  },
+  {
+    id: 'tacos-cordon-bleu',
+    name: 'Tacos Cordon Bleu',
+    price: 40.00,
+    category: 'tacos',
+    image: 'https://images.unsplash.com/photo-1626700051175-6818013e0d4d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+  },
+  {
+    id: 'tacos-deli',
+    name: 'Tacos Deli in the Box',
+    price: 40.00,
+    category: 'tacos',
+    image: 'https://images.unsplash.com/photo-1626700051175-6818013e0d4d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+  },
+  
   // Drinks
   {
     id: 'drink-orange',

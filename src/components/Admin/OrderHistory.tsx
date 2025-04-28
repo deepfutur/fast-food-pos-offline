@@ -13,17 +13,21 @@ const OrderHistory: React.FC = () => {
   
   const downloadHistory = () => {
     try {
-      const orders = state.orders.map(order => ({
-        id: order.id,
-        date: format(order.timestamp, 'dd/MM/yyyy HH:mm'),
-        items: order.items.reduce((acc, item) => acc + item.quantity, 0),
-        total: `${order.total.toFixed(2)} ${state.currency}`,
-        payment: order.paymentMethod === 'cash' ? 'Espèces' : order.paymentMethod === 'card' ? 'Carte' : 'Bon'
-      }));
+      const orders = state.orders.map(order => {
+        const cashier = state.users.find(user => user.id === order.cashierId)?.name || 'Inconnu';
+        return {
+          id: order.id,
+          date: format(order.timestamp, 'dd/MM/yyyy HH:mm'),
+          items: order.items.reduce((acc, item) => acc + item.quantity, 0),
+          total: `${order.total.toFixed(2)} ${state.currency}`,
+          payment: order.paymentMethod === 'cash' ? 'Espèces' : order.paymentMethod === 'card' ? 'Carte' : 'Bon',
+          cashier
+        };
+      });
 
       const csvContent = [
-        ['ID', 'Date', 'Articles', 'Total', 'Paiement'],
-        ...orders.map(o => [o.id, o.date, o.items, o.total, o.payment])
+        ['ID', 'Date', 'Articles', 'Total', 'Paiement', 'Caissier'],
+        ...orders.map(o => [o.id, o.date, o.items, o.total, o.payment, o.cashier])
       ].map(row => row.join(',')).join('\n');
 
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -59,29 +63,34 @@ const OrderHistory: React.FC = () => {
               <TableHead>Date</TableHead>
               <TableHead>Articles</TableHead>
               <TableHead>Méthode de paiement</TableHead>
+              <TableHead>Caissier</TableHead>
               <TableHead className="text-right">Total</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {state.orders.map(order => (
-              <TableRow key={order.id}>
-                <TableCell className="font-medium">{order.id.slice(-6)}</TableCell>
-                <TableCell>
-                  {format(order.timestamp, 'dd MMM yyyy, HH:mm', { locale: fr })}
-                </TableCell>
-                <TableCell>
-                  {order.items.reduce((acc, item) => acc + item.quantity, 0)} articles
-                </TableCell>
-                <TableCell>
-                  {order.paymentMethod === 'cash' && 'Espèces'}
-                  {order.paymentMethod === 'card' && 'Carte'}
-                  {order.paymentMethod === 'voucher' && 'Bon'}
-                </TableCell>
-                <TableCell className="text-right">
-                  {order.total.toFixed(2)} {state.currency}
-                </TableCell>
-              </TableRow>
-            ))}
+            {state.orders.map(order => {
+              const cashier = state.users.find(user => user.id === order.cashierId)?.name || 'Inconnu';
+              return (
+                <TableRow key={order.id}>
+                  <TableCell className="font-medium">{order.id.slice(-6)}</TableCell>
+                  <TableCell>
+                    {format(order.timestamp, 'dd MMM yyyy, HH:mm', { locale: fr })}
+                  </TableCell>
+                  <TableCell>
+                    {order.items.reduce((acc, item) => acc + item.quantity, 0)} articles
+                  </TableCell>
+                  <TableCell>
+                    {order.paymentMethod === 'cash' && 'Espèces'}
+                    {order.paymentMethod === 'card' && 'Carte'}
+                    {order.paymentMethod === 'voucher' && 'Bon'}
+                  </TableCell>
+                  <TableCell>{cashier}</TableCell>
+                  <TableCell className="text-right">
+                    {order.total.toFixed(2)} {state.currency}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>

@@ -1,22 +1,30 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { LogOut, UserCog } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { usePOS } from '@/context/POSContext';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { toast } from '@/components/ui/sonner';
 
 const Header: React.FC = () => {
   const { state, logout, login } = usePOS();
   const { currentUser } = state;
   const navigate = useNavigate();
+  const [selectedUserId, setSelectedUserId] = useState<string>('');
+  const [pin, setPin] = useState('');
   
-  const handleUserChange = (pin: string) => {
-    const success = login(pin);
-    if (success) {
-      toast.success("Utilisateur changé avec succès");
+  const handleUserChange = () => {
+    const user = state.users.find(u => u.id === selectedUserId);
+    if (user && pin === user.pin) {
+      const success = login(pin);
+      if (success) {
+        toast.success("Utilisateur changé avec succès");
+        setPin('');
+        setSelectedUserId('');
+      }
     } else {
       toast.error("Code PIN invalide");
     }
@@ -68,19 +76,42 @@ const Header: React.FC = () => {
               <DialogHeader>
                 <DialogTitle>Changer d'utilisateur</DialogTitle>
               </DialogHeader>
-              <div className="py-4">
-                <Select onValueChange={handleUserChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner un utilisateur" />
-                  </SelectTrigger>
-                  <SelectContent>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label>Sélectionner un utilisateur</Label>
+                  <select 
+                    className="w-full p-2 rounded-md border bg-background"
+                    value={selectedUserId}
+                    onChange={(e) => setSelectedUserId(e.target.value)}
+                  >
+                    <option value="">Choisir un utilisateur</option>
                     {state.users.map(user => (
-                      <SelectItem key={user.id} value={user.pin}>
+                      <option key={user.id} value={user.id}>
                         {user.name} ({user.role === 'admin' ? 'Admin' : 'Caissier'})
-                      </SelectItem>
+                      </option>
                     ))}
-                  </SelectContent>
-                </Select>
+                  </select>
+                </div>
+                
+                {selectedUserId && (
+                  <div className="space-y-2">
+                    <Label>Code PIN</Label>
+                    <Input 
+                      type="password" 
+                      maxLength={4}
+                      value={pin}
+                      onChange={(e) => setPin(e.target.value)}
+                      placeholder="Entrez le code PIN"
+                    />
+                    <Button 
+                      className="w-full mt-2"
+                      onClick={handleUserChange}
+                      disabled={!pin || pin.length !== 4}
+                    >
+                      Confirmer
+                    </Button>
+                  </div>
+                )}
               </div>
             </DialogContent>
           </Dialog>
