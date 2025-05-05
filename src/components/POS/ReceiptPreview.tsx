@@ -1,8 +1,9 @@
+
 import React from 'react';
 import { usePOS } from '../../context/POSContext';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { CartItem, Order } from '../../types/pos';
+import { CartItem } from '../../types/pos';
 import { Printer, Download } from 'lucide-react';
 
 interface ReceiptPreviewProps {
@@ -55,6 +56,13 @@ const ReceiptPreview: React.FC<ReceiptPreviewProps> = ({ isOpen, onClose, order 
         
         <div className="receipt-content bg-white p-6 font-mono text-sm border mx-auto w-80">
           <div className="text-center mb-4">
+            <div className="mx-auto w-32 h-32 mb-2">
+              <img 
+                src="/lovable-uploads/bd9aae2b-67cd-4156-be07-dae9877a6d5a.png" 
+                alt="Deli in the Box" 
+                className="w-full h-full object-contain"
+              />
+            </div>
             <div className="font-bold text-lg">{businessInfo.name}</div>
             <div>{businessInfo.address}</div>
             <div>Tel: {businessInfo.phone}</div>

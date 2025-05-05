@@ -10,7 +10,14 @@ const POSLayout: React.FC<POSLayoutProps> = ({ children }) => {
     <div className="min-h-screen bg-pos-background flex flex-col">
       <header className="bg-pos-dark text-pos-light p-4">
         <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-xl font-bold">Fast Food Express</h1>
+          <div className="flex items-center gap-4">
+            <img 
+              src="/lovable-uploads/bd9aae2b-67cd-4156-be07-dae9877a6d5a.png" 
+              alt="Deli in the Box" 
+              className="h-12 w-12"
+            />
+            <h1 className="text-xl font-bold">Fast Food Express</h1>
+          </div>
         </div>
       </header>
 
