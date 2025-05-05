@@ -3,7 +3,8 @@ import React, { useEffect } from 'react';
 import { usePOS } from '../../context/POSContext';
 import { Product } from '../../types/pos';
 import { Card, CardContent } from '@/components/ui/card';
-import { Pizza } from 'lucide-react';
+import { Pizza, Coffee, Utensils } from 'lucide-react';
+import { toast } from '@/components/ui/use-toast';
 
 interface ProductGridProps {
   products: Product[];
@@ -46,6 +47,27 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
     }
   };
   
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case 'pizza':
+        return <Pizza size={48} className="text-gray-400" />;
+      case 'drinks':
+        return <Coffee size={48} className="text-gray-400" />;
+      default:
+        return <Utensils size={48} className="text-gray-400" />;
+    }
+  };
+  
+  useEffect(() => {
+    if (products.length === 0) {
+      toast({
+        title: "Catégorie vide",
+        description: "Aucun produit trouvé dans cette catégorie.",
+        variant: "destructive",
+      });
+    }
+  }, [products]);
+  
   if (products.length === 0) {
     return <p className="text-center py-8">Aucun produit trouvé dans cette catégorie.</p>;
   }
@@ -72,7 +94,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                <Pizza size={48} className="text-gray-400" />
+                {getCategoryIcon(product.category)}
               </div>
             )}
             <div className="absolute top-0 right-0 bg-pos-primary text-white px-2 py-1 text-sm font-semibold rounded-bl-lg">
