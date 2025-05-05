@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { usePOS } from '../../context/POSContext';
 import { Product } from '../../types/pos';
 import { Card, CardContent } from '@/components/ui/card';
@@ -10,6 +10,13 @@ interface ProductGridProps {
 
 const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
   const { addToCart, state } = usePOS();
+  
+  useEffect(() => {
+    console.log("ProductGrid received products:", products.length);
+    if (products.length > 0) {
+      console.log("First product:", products[0]);
+    }
+  }, [products]);
   
   const getCurrencySymbol = (currency: string) => {
     switch (currency) {
@@ -42,6 +49,11 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
               src={product.image} 
               alt={product.name} 
               className="w-full h-full object-cover"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = 'https://images.unsplash.com/photo-1599974579688-8dbdd335c77f'; // Fallback image
+                console.error(`Failed to load image for ${product.name}`);
+              }}
             />
             <div className="absolute top-0 right-0 bg-pos-primary text-white px-2 py-1 text-sm font-semibold rounded-bl-lg">
               {product.price.toFixed(2)} {getCurrencySymbol(state.currency)}
@@ -49,7 +61,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
           </div>
           <CardContent className="p-2">
             <h3 className="font-bold text-lg truncate">{product.name}</h3>
-            <p className="text-sm text-gray-500 truncate">{product.description}</p>
+            <p className="text-sm text-gray-500 truncate">{product.description || ''}</p>
           </CardContent>
         </Card>
       ))}

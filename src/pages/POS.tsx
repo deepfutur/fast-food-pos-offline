@@ -12,10 +12,19 @@ const POS: React.FC = () => {
   
   // Vérifier si les catégories ont des produits au chargement
   useEffect(() => {
+    const pizzaProducts = products.filter(p => p.category === 'pizza');
+    const tacosProducts = products.filter(p => p.category === 'tacos');
+    
     console.log('Catégories disponibles:', state.categories.map(c => c.id));
     console.log('Produits disponibles:', products.length);
-    console.log('Produits pizza:', products.filter(p => p.category === 'pizza').length);
-    console.log('Produits tacos:', products.filter(p => p.category === 'tacos').length);
+    console.log('Produits pizza:', pizzaProducts.length);
+    console.log('Détails produits pizza:', pizzaProducts.map(p => p.name));
+    console.log('Produits tacos:', tacosProducts.length);
+    console.log('Détails produits tacos:', tacosProducts.map(p => p.name));
+    
+    if (pizzaProducts.length === 0 && tacosProducts.length === 0) {
+      console.warn('Les produits pizza et tacos sont définis mais ne sont pas chargés correctement.');
+    }
   }, [state.categories, products]);
   
   // Sort products by category when no category is selected
