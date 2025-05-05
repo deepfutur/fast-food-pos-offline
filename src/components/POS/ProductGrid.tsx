@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { usePOS } from '../../context/POSContext';
 import { Product } from '../../types/pos';
@@ -59,12 +58,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
   };
   
   useEffect(() => {
-    if (products.length === 0) {
-      toast({
-        title: "Catégorie vide",
-        description: "Aucun produit trouvé dans cette catégorie.",
-        variant: "destructive",
-      });
+    // Force refresh of the component to ensure latest prices are displayed
+    if (products.length > 0) {
+      console.log("Displaying products with updated prices:", 
+        products.filter(p => p.category === 'pizza').map(p => `${p.name}: ${p.price}`));
     }
   }, [products]);
   
@@ -76,7 +73,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {products.map(product => (
         <Card 
-          key={product.id} 
+          key={product.id + '-' + product.price} // Adding price to key to force re-render on price change
           className="overflow-hidden hover:shadow-lg transition cursor-pointer hover:scale-105"
           onClick={() => addToCart(product)}
         >
