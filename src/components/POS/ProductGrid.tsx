@@ -21,7 +21,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
   const getCurrencySymbol = (currency: string) => {
     switch (currency) {
       case 'MAD':
-        return 'MAD';
+        return 'DH';
       case 'XAF':
         return 'XAF';
       case 'USD':
