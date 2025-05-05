@@ -19,8 +19,10 @@ const POS: React.FC = () => {
     console.log("Checking product prices in mockData:", 
       mockProducts.filter(p => p.category === 'pizza').map(p => `${p.name}: ${p.price}`));
     
-    // Force refresh of products with latest data
-    dispatch({ type: 'REFRESH_PRODUCTS', payload: mockProducts });
+    // Force refresh of products 
+    mockProducts.forEach(product => {
+      dispatch({ type: 'UPDATE_PRODUCT', payload: product });
+    });
     
     // Verify pizza prices after refresh
     setTimeout(() => {

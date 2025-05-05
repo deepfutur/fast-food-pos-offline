@@ -2,13 +2,14 @@
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { FileText, ShoppingBag, Users, Settings } from 'lucide-react';
+import { FileText, ShoppingBag, Users, Settings, Package } from 'lucide-react';
 import MenuEditor from '@/components/Admin/MenuEditor';
 import UpdatePinForm from '@/components/Admin/UpdatePinForm';
 import OrderHistory from '@/components/Admin/OrderHistory';
 import SalesStatistics from '@/components/Admin/SalesStatistics';
 import AppSettings from '@/components/Admin/AppSettings';
 import UserManager from '@/components/Admin/UserManager';
+import StockManager from '@/components/Admin/StockManager';
 import Header from '@/components/Layout/Header';
 
 const Dashboard: React.FC = () => {
@@ -30,6 +31,10 @@ const Dashboard: React.FC = () => {
             <TabsTrigger value="menu">
               <ShoppingBag className="h-4 w-4 mr-2" />
               Menu
+            </TabsTrigger>
+            <TabsTrigger value="stock">
+              <Package className="h-4 w-4 mr-2" />
+              Stock
             </TabsTrigger>
             <TabsTrigger value="users">
               <Users className="h-4 w-4 mr-2" />
@@ -61,6 +66,14 @@ const Dashboard: React.FC = () => {
             <Card>
               <CardContent className="p-6">
                 <MenuEditor />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="stock">
+            <Card>
+              <CardContent className="p-6">
+                <StockManager />
               </CardContent>
             </Card>
           </TabsContent>
