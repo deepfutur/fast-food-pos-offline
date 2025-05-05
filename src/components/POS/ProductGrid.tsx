@@ -25,6 +25,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
     }
   };
   
+  if (products.length === 0) {
+    return <p className="text-center py-8">Aucun produit trouvé dans cette catégorie.</p>;
+  }
+  
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {products.map(product => (

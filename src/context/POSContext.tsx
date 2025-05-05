@@ -16,7 +16,8 @@ type POSAction =
   | { type: 'DELETE_PRODUCT'; payload: string }
   | { type: 'UPDATE_USER_PIN'; payload: { userId: string; newPin: string } }
   | { type: 'ADD_USER'; payload: User }
-  | { type: 'UPDATE_SETTINGS'; payload: { businessInfo: POSState['businessInfo']; tax: number; currency: POSState['currency'] } };
+  | { type: 'UPDATE_SETTINGS'; payload: { businessInfo: POSState['businessInfo']; tax: number; currency: POSState['currency'] } }
+  | { type: 'DELETE_ORDER'; payload: string };
 
 interface POSContextType {
   state: POSState;
@@ -33,6 +34,7 @@ interface POSContextType {
   getCartTax: () => number;
   updateUserPin: (userId: string, newPin: string) => boolean;
   addUser: (user: User) => boolean;
+  deleteOrder: (orderId: string) => void;
 }
 
 const POSContext = createContext<POSContextType | undefined>(undefined);
@@ -303,6 +305,22 @@ const posReducer = (state: POSState, action: POSAction): POSState => {
       return newState;
     }
     
+    case 'DELETE_ORDER': {
+      const orderId = action.payload;
+      
+      if (!state.currentUser || state.currentUser.role !== 'admin') {
+        return state;
+      }
+      
+      newState = {
+        ...state,
+        orders: state.orders.filter(order => order.id !== orderId)
+      };
+      
+      saveToLocalStorage(newState);
+      return newState;
+    }
+    
     default:
       return state;
   }
@@ -372,6 +390,10 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     return true;
   };
   
+  const deleteOrder = (orderId: string) => {
+    dispatch({ type: 'DELETE_ORDER', payload: orderId });
+  };
+  
   return (
     <POSContext.Provider value={{ 
       state, 
@@ -387,7 +409,8 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       getCartSubtotal,
       getCartTax,
       updateUserPin,
-      addUser
+      addUser,
+      deleteOrder
     }}>
       {children}
     </POSContext.Provider>

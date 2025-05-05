@@ -5,11 +5,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
-import { FileDown } from 'lucide-react';
+import { FileDown, Trash2 } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
 
 const OrderHistory: React.FC = () => {
-  const { state } = usePOS();
+  const { state, deleteOrder } = usePOS();
   
   const downloadHistory = () => {
     try {
@@ -41,6 +41,13 @@ const OrderHistory: React.FC = () => {
     }
   };
   
+  const handleDeleteOrder = (orderId: string) => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer cette commande ?')) {
+      deleteOrder(orderId);
+      toast.success('Commande supprimée avec succès');
+    }
+  };
+  
   if (state.orders.length === 0) {
     return <p className="text-center py-8">Aucune commande trouvée.</p>;
   }
@@ -65,6 +72,7 @@ const OrderHistory: React.FC = () => {
               <TableHead>Méthode de paiement</TableHead>
               <TableHead>Caissier</TableHead>
               <TableHead className="text-right">Total</TableHead>
+              <TableHead className="text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -87,6 +95,16 @@ const OrderHistory: React.FC = () => {
                   <TableCell>{cashier}</TableCell>
                   <TableCell className="text-right">
                     {order.total.toFixed(2)} {state.currency}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                      onClick={() => handleDeleteOrder(order.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </TableCell>
                 </TableRow>
               );

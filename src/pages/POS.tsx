@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { usePOS } from '../context/POSContext';
 import CategoryTabs from '../components/POS/CategoryTabs';
 import ProductGrid from '../components/POS/ProductGrid';
@@ -7,8 +7,16 @@ import ShoppingCart from '../components/POS/ShoppingCart';
 import Header from '../components/Layout/Header';
 
 const POS: React.FC = () => {
-  const { state } = usePOS();
+  const { state, dispatch } = usePOS();
   const { products, selectedCategory } = state;
+  
+  // Vérifier si les catégories ont des produits au chargement
+  useEffect(() => {
+    console.log('Catégories disponibles:', state.categories.map(c => c.id));
+    console.log('Produits disponibles:', products.length);
+    console.log('Produits pizza:', products.filter(p => p.category === 'pizza').length);
+    console.log('Produits tacos:', products.filter(p => p.category === 'tacos').length);
+  }, [state.categories, products]);
   
   // Sort products by category when no category is selected
   const filteredProducts = selectedCategory
