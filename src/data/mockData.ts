@@ -1,3 +1,4 @@
+
 import { Category, Product, User, POSState } from '../types/pos';
 
 export const categories: Category[] = [
@@ -14,62 +15,62 @@ export const categories: Category[] = [
 ];
 
 export const products: Product[] = [
-  // Pizza
+  // Pizza - with updated prices and better images
   {
     id: 'pizza-margherita',
     name: 'Pizza Margherita',
     price: 30.00,
     category: 'pizza',
     description: 'Sauce tomate, mozzarella',
-    image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002',
   },
   {
     id: 'pizza-thon',
     name: 'Pizza Thon',
-    price: 40.00,
+    price: 30.00, // Updated price
     category: 'pizza',
     description: 'Sauce tomate, thon, oignon, mozzarella',
-    image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591',
   },
   {
     id: 'pizza-poulet',
     name: 'Pizza Poulet',
-    price: 45.00,
+    price: 40.00, // Updated price
     category: 'pizza',
-    description: 'Sauce tomate, thon, oignon, mozzarella',
-    image: 'https://images.unsplash.com/photo-1565299585577-e4e457c61baa?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    description: 'Sauce tomate, poulet, mozzarella',
+    image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38',
   },
   {
     id: 'pizza-viande',
     name: 'Pizza Viande Hachée',
-    price: 50.00,
+    price: 40.00, // Updated price
     category: 'pizza',
     description: 'Sauce tomate, viande hachée, mozzarella',
-    image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    image: 'https://images.unsplash.com/photo-1588315029754-2dd089d39a1a',
   },
   {
     id: 'pizza-4-saisons',
     name: 'Pizza 4 Saisons',
-    price: 55.00,
+    price: 40.00, // Updated price
     category: 'pizza',
     description: 'Sauce tomate, viande hachée, thon, poulet, charcuterie, mozzarella',
-    image: 'https://images.unsplash.com/photo-1594007654729-407eedc4be65?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    image: 'https://images.unsplash.com/photo-1594007654729-407eedc4be65',
   },
   {
     id: 'pizza-4-fromages',
     name: 'Pizza 4 Fromages',
-    price: 40.00,
+    price: 40.00, // Updated price
     category: 'pizza',
     description: 'Sauce tomate, edam cheese, mozzarella, gouda, parmesan',
-    image: 'https://images.unsplash.com/photo-1528137871618-79d2761e3fd5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    image: 'https://images.unsplash.com/photo-1528137871618-79d2761e3fd5',
   },
   {
     id: 'pizza-pepperoni',
     name: 'Pizza Pepperoni',
-    price: 45.00,
+    price: 40.00, // Updated price
     category: 'pizza',
     description: 'Sauce tomate, pepperoni, mozzarella',
-    image: 'https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    image: 'https://images.unsplash.com/photo-1534308983496-4fabb1a015ee',
   },
   {
     id: 'pizza-fruits-mer',
@@ -77,7 +78,7 @@ export const products: Product[] = [
     price: 60.00,
     category: 'pizza',
     description: 'Sauce tomate, fruits de mer, mozzarella',
-    image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    image: 'https://images.unsplash.com/photo-1595708684082-a173bb3a06c5',
   },
   {
     id: 'pizza-deli',
@@ -85,67 +86,74 @@ export const products: Product[] = [
     price: 60.00,
     category: 'pizza',
     description: 'Sauce tomate, pepperoni, viande hachée, mozzarella',
-    image: 'https://images.unsplash.com/photo-1571066811602-716837d681de?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    image: 'https://images.unsplash.com/photo-1571066811602-716837d681de',
   },
   
-  // Tacos
+  // Tacos - with better food images
   {
     id: 'tacos-poulet',
     name: 'Tacos Poulet',
     price: 35.00,
     category: 'tacos',
-    image: 'https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    description: 'Délicieux tacos au poulet',
+    image: 'https://images.unsplash.com/photo-1611250188496-e966043a0629',
   },
   {
     id: 'tacos-viande',
     name: 'Tacos Viande Hachée',
     price: 35.00,
     category: 'tacos',
-    image: 'https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    description: 'Tacos avec viande hachée savoureuse',
+    image: 'https://images.unsplash.com/photo-1613514785940-daed07799d9b',
   },
   {
     id: 'tacos-mixte',
     name: 'Tacos Mixte',
     price: 35.00,
     category: 'tacos',
-    image: 'https://images.unsplash.com/photo-1611699363898-67bcb21400e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    description: 'Tacos mixte poulet et viande hachée',
+    image: 'https://images.unsplash.com/photo-1504544750208-dc0358e63f7f',
   },
   {
     id: 'tacos-saucisse',
     name: 'Tacos Saucisse',
     price: 35.00,
     category: 'tacos',
-    image: 'https://images.unsplash.com/photo-1619216083420-6e54b1f0b683?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    description: 'Tacos à la saucisse',
+    image: 'https://images.unsplash.com/photo-1552332386-f8dd00dc2f85',
   },
   {
     id: 'tacos-nuggets',
     name: 'Tacos Nuggets',
     price: 40.00,
     category: 'tacos',
-    image: 'https://images.unsplash.com/photo-1626700051175-6818013e0d4d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    description: 'Tacos avec nuggets',
+    image: 'https://images.unsplash.com/photo-1584208632869-05fa2b2a5934',
   },
   {
     id: 'tacos-cordon-bleu',
     name: 'Tacos Cordon Bleu',
     price: 40.00,
     category: 'tacos',
-    image: 'https://images.unsplash.com/photo-1626700051175-6818013e0d4d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    description: 'Tacos avec cordon bleu',
+    image: 'https://images.unsplash.com/photo-1615870216519-2f9fa575fa6c',
   },
   {
     id: 'tacos-deli',
     name: 'Tacos Deli in the Box',
     price: 40.00,
     category: 'tacos',
-    image: 'https://images.unsplash.com/photo-1626700051175-6818013e0d4d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    description: 'Tacos spécial Deli in the Box',
+    image: 'https://images.unsplash.com/photo-1626700051175-6818013e0d4d',
   },
   
-  // Drinks
+  // Drinks - with better images matching the fruit descriptions
   {
     id: 'drink-orange',
     name: 'Jus d\'orange',
     price: 12.00,
     category: 'drinks',
-    image: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    image: 'https://images.unsplash.com/photo-1600271886742-f049cd451bba',
     description: 'Jus d\'orange frais'
   },
   {
@@ -153,7 +161,7 @@ export const products: Product[] = [
     name: 'Jus de betterave',
     price: 12.00,
     category: 'drinks',
-    image: 'https://images.unsplash.com/photo-1594312180721-3b5217cfc65f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    image: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5',
     description: 'Jus de betterave frais'
   },
   {
@@ -161,7 +169,7 @@ export const products: Product[] = [
     name: 'Jus de pommes',
     price: 15.00,
     category: 'drinks',
-    image: 'https://images.unsplash.com/photo-1620837953295-3328afb074f2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    image: 'https://images.unsplash.com/photo-1602763288580-74b2483fe703',
     description: 'Jus de pommes frais'
   },
   {
@@ -169,7 +177,7 @@ export const products: Product[] = [
     name: 'Jus d\'ananas',
     price: 20.00,
     category: 'drinks',
-    image: 'https://images.unsplash.com/photo-1587736661445-d96c39068824?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    image: 'https://images.unsplash.com/photo-1587736661445-d96c39068824',
     description: 'Jus d\'ananas frais'
   },
   {
@@ -177,7 +185,7 @@ export const products: Product[] = [
     name: 'Jus de fraise',
     price: 20.00,
     category: 'drinks',
-    image: 'https://images.unsplash.com/photo-1508254627334-d4fa3b3b8178?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    image: 'https://images.unsplash.com/photo-1601493700625-9185417898cf',
     description: 'Jus de fraise frais'
   },
   {
@@ -185,7 +193,7 @@ export const products: Product[] = [
     name: 'Jus de mangue',
     price: 20.00,
     category: 'drinks',
-    image: 'https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    image: 'https://images.unsplash.com/photo-1623065422902-30a2d299bbe4',
     description: 'Jus de mangue frais'
   },
   {
@@ -193,7 +201,7 @@ export const products: Product[] = [
     name: 'Jus royale',
     price: 25.00,
     category: 'drinks',
-    image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    image: 'https://images.unsplash.com/photo-1621263764928-df1444c5e859',
     description: 'Notre mélange spécial de fruits'
   },
   {
@@ -201,7 +209,7 @@ export const products: Product[] = [
     name: 'Jus de banane',
     price: 15.00,
     category: 'drinks',
-    image: 'https://images.unsplash.com/photo-1557409518-691ebcd96038?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    image: 'https://images.unsplash.com/photo-1589733955941-5eeaf752f6dd',
     description: 'Jus de banane frais'
   },
   {
@@ -209,7 +217,7 @@ export const products: Product[] = [
     name: 'Jus de citron',
     price: 12.00,
     category: 'drinks',
-    image: 'https://images.unsplash.com/photo-1444952483853-7c36e902e722?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    image: 'https://images.unsplash.com/photo-1603833971780-4a152c652c41',
     description: 'Citronnade fraîche'
   },
   {
@@ -217,7 +225,7 @@ export const products: Product[] = [
     name: 'Jus zaazaa',
     price: 25.00,
     category: 'drinks',
-    image: 'https://images.unsplash.com/photo-1514362545857-3bc16c42047b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    image: 'https://images.unsplash.com/photo-1560508180-03f285f67ded',
     description: 'Notre spécialité Zaazaa'
   },
   {
@@ -225,7 +233,7 @@ export const products: Product[] = [
     name: 'Soda',
     price: 6.00,
     category: 'drinks',
-    image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    image: 'https://images.unsplash.com/photo-1581006852262-e4307cf6283a',
     description: 'Soda au choix'
   },
   {
@@ -233,7 +241,7 @@ export const products: Product[] = [
     name: 'Bouteille d\'eau',
     price: 4.00,
     category: 'drinks',
-    image: 'https://images.unsplash.com/photo-1523362628745-0c100150b504?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    image: 'https://images.unsplash.com/photo-1606168094336-48f955066ebd',
     description: 'Eau minérale'
   },
 

@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { usePOS } from '../../context/POSContext';
 import { Product } from '../../types/pos';
 import { Card, CardContent } from '@/components/ui/card';
+import { Pizza } from 'lucide-react';
 
 interface ProductGridProps {
   products: Product[];
@@ -45,16 +46,22 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
           onClick={() => addToCart(product)}
         >
           <div className="relative w-full h-40">
-            <img 
-              src={product.image} 
-              alt={product.name} 
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = 'https://images.unsplash.com/photo-1599974579688-8dbdd335c77f'; // Fallback image
-                console.error(`Failed to load image for ${product.name}`);
-              }}
-            />
+            {product.image ? (
+              <img 
+                src={product.image} 
+                alt={product.name} 
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = 'https://images.unsplash.com/photo-1513104890138-7c749659a591'; // Fallback image for pizza
+                  console.error(`Failed to load image for ${product.name}`);
+                }}
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                <Pizza size={48} className="text-gray-400" />
+              </div>
+            )}
             <div className="absolute top-0 right-0 bg-pos-primary text-white px-2 py-1 text-sm font-semibold rounded-bl-lg">
               {product.price.toFixed(2)} {getCurrencySymbol(state.currency)}
             </div>
