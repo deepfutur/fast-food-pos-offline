@@ -33,6 +33,19 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
     }
   };
   
+  const getFallbackImage = (category: string) => {
+    switch (category) {
+      case 'pizza':
+        return 'https://images.unsplash.com/photo-1513104890138-7c749659a591'; // Pizza fallback
+      case 'tacos':
+        return 'https://images.unsplash.com/photo-1611250188496-e966043a0629'; // Tacos fallback
+      case 'drinks':
+        return 'https://images.unsplash.com/photo-1600271886742-f049cd451bba'; // Drinks fallback
+      default:
+        return 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c'; // Generic food fallback
+    }
+  };
+  
   if (products.length === 0) {
     return <p className="text-center py-8">Aucun produit trouvé dans cette catégorie.</p>;
   }
@@ -53,7 +66,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  target.src = 'https://images.unsplash.com/photo-1513104890138-7c749659a591'; // Fallback image for pizza
+                  target.src = getFallbackImage(product.category);
                   console.error(`Failed to load image for ${product.name}`);
                 }}
               />
