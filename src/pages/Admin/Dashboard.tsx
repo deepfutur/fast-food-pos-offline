@@ -2,7 +2,7 @@
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { FileText, ShoppingBag, Users, Settings, Package } from 'lucide-react';
+import { FileText, ShoppingBag, Users, Settings, Package, BarChart2 } from 'lucide-react';
 import MenuEditor from '@/components/Admin/MenuEditor';
 import UpdatePinForm from '@/components/Admin/UpdatePinForm';
 import OrderHistory from '@/components/Admin/OrderHistory';
@@ -10,6 +10,7 @@ import SalesStatistics from '@/components/Admin/SalesStatistics';
 import AppSettings from '@/components/Admin/AppSettings';
 import UserManager from '@/components/Admin/UserManager';
 import StockManager from '@/components/Admin/StockManager';
+import FinancialReport from '@/components/Admin/FinancialReport';
 import Header from '@/components/Layout/Header';
 
 const Dashboard: React.FC = () => {
@@ -35,6 +36,10 @@ const Dashboard: React.FC = () => {
             <TabsTrigger value="stock">
               <Package className="h-4 w-4 mr-2" />
               Stock
+            </TabsTrigger>
+            <TabsTrigger value="financial">
+              <BarChart2 className="h-4 w-4 mr-2" />
+              Bilan
             </TabsTrigger>
             <TabsTrigger value="users">
               <Users className="h-4 w-4 mr-2" />
@@ -74,6 +79,14 @@ const Dashboard: React.FC = () => {
             <Card>
               <CardContent className="p-6">
                 <StockManager />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="financial">
+            <Card>
+              <CardContent className="p-6">
+                <FinancialReport />
               </CardContent>
             </Card>
           </TabsContent>
