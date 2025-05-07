@@ -532,7 +532,7 @@ const StockManager: React.FC = () => {
                   <SelectValue placeholder="Catégorie" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tous</SelectItem>
+                  <SelectItem value="all">Tous</SelectItem>
                   {uniqueCategories.map(category => (
                     <SelectItem key={category} value={category}>{category}</SelectItem>
                   ))}
@@ -544,7 +544,7 @@ const StockManager: React.FC = () => {
                   <SelectValue placeholder="Fournisseur" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tous</SelectItem>
+                  <SelectItem value="all">Tous</SelectItem>
                   {uniqueSuppliers.map(supplier => (
                     <SelectItem key={supplier} value={supplier}>{supplier}</SelectItem>
                   ))}
@@ -816,7 +816,7 @@ const StockManager: React.FC = () => {
                   <SelectValue placeholder="Catégorie" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Toutes</SelectItem>
+                  <SelectItem value="all">Toutes</SelectItem>
                   {uniqueExpenseCategories.map(category => (
                     <SelectItem key={category} value={category}>{category}</SelectItem>
                   ))}
