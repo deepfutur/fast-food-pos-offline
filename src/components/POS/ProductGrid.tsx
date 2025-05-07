@@ -45,6 +45,18 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
         return 'https://images.unsplash.com/photo-1611250188496-e966043a0629'; // Tacos fallback
       case 'drinks':
         return 'https://images.unsplash.com/photo-1600271886742-f049cd451bba'; // Drinks fallback
+      case 'sandwiches':
+        return 'https://images.unsplash.com/photo-1554433607-66b5efe9d304'; // Sandwiches fallback
+      case 'burgers':
+        return 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd'; // Burgers fallback
+      case 'salads':
+        return 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd'; // Salads fallback
+      case 'pasticcio':
+        return 'https://images.unsplash.com/photo-1560750133-c5d4ef4de911'; // Pasticcio fallback
+      case 'pasta':
+        return 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8'; // Pasta fallback
+      case 'dishes':
+        return 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1'; // Dishes fallback
       default:
         return 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c'; // Generic food fallback
     }

@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { usePOS } from '../../context/POSContext';
 import { Button } from '@/components/ui/button';
-import { Pizza, Coffee } from 'lucide-react';
+import { Pizza, Coffee, Utensils, ShoppingCart } from 'lucide-react';
 
 const CategoryTabs: React.FC = () => {
   const { state, dispatch } = usePOS();
@@ -19,8 +19,24 @@ const CategoryTabs: React.FC = () => {
         return <Pizza size={18} className="mr-2" />;
       case 'drinks':
         return <Coffee size={18} className="mr-2" />;
+      case 'tacos':
+        return <ShoppingCart size={18} className="mr-2" />;
+      case 'sandwiches':
+        return <Utensils size={18} className="mr-2" />;
+      case 'burgers':
+        return <Utensils size={18} className="mr-2" />;
+      case 'salads':
+        return <Utensils size={18} className="mr-2" />;
+      case 'pasticcio':
+        return <Utensils size={18} className="mr-2" />;
+      case 'pasta':
+        return <Utensils size={18} className="mr-2" />;
+      case 'dishes':
+        return <Utensils size={18} className="mr-2" />;
+      case 'menus':
+        return <ShoppingCart size={18} className="mr-2" />;
       default:
-        return null;
+        return <Utensils size={18} className="mr-2" />;
     }
   };
   
@@ -34,6 +50,7 @@ const CategoryTabs: React.FC = () => {
           console.log("Selected all categories");
         }}
       >
+        {getCategoryIcon("all")}
         Tous
       </Button>
       
