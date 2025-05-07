@@ -37,10 +37,24 @@ const POS: React.FC = () => {
     console.log("Display products updated with latest state");
   }, [products]);
   
-  // Sort products by category when no category is selected
+  // Filter products by category
   const filteredProducts = selectedCategory
     ? displayProducts.filter(product => product.category === selectedCategory)
     : displayProducts.sort((a, b) => a.category.localeCompare(b.category));
+  
+  // Debug the filtering
+  useEffect(() => {
+    if (selectedCategory) {
+      console.log(`Filtering by category: ${selectedCategory}`);
+      console.log(`Filtered products count: ${filteredProducts.length}`);
+      if (filteredProducts.length === 0) {
+        // Check if the category exists in the products
+        const categoryExists = products.some(p => p.category === selectedCategory);
+        console.log(`Does category ${selectedCategory} exist in products? ${categoryExists}`);
+        console.log(`Available categories: ${Array.from(new Set(products.map(p => p.category)))}`);
+      }
+    }
+  }, [selectedCategory, filteredProducts, products]);
   
   return (
     <div className="h-screen flex flex-col">

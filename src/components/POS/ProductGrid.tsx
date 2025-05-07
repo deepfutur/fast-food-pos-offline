@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { usePOS } from '../../context/POSContext';
 import { Product } from '../../types/pos';
@@ -16,6 +17,9 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
     console.log("ProductGrid received products:", products.length);
     if (products.length > 0) {
       console.log("First product:", products[0]);
+      console.log("Products by category:", 
+        Array.from(new Set(products.map(p => p.category)))
+          .map(cat => `${cat}: ${products.filter(p => p.category === cat).length}`));
     }
   }, [products]);
   
@@ -57,13 +61,14 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
     }
   };
   
-  useEffect(() => {
-    // Force refresh of the component to ensure latest prices are displayed
-    if (products.length > 0) {
-      console.log("Displaying products with updated prices:", 
-        products.filter(p => p.category === 'pizza').map(p => `${p.name}: ${p.price}`));
-    }
-  }, [products]);
+  const handleAddToCart = (product: Product) => {
+    addToCart(product);
+    toast({
+      title: "Produit ajouté",
+      description: `${product.name} a été ajouté au panier`,
+      duration: 2000,
+    });
+  };
   
   if (products.length === 0) {
     return <p className="text-center py-8">Aucun produit trouvé dans cette catégorie.</p>;
@@ -75,7 +80,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
         <Card 
           key={product.id + '-' + product.price} // Adding price to key to force re-render on price change
           className="overflow-hidden hover:shadow-lg transition cursor-pointer hover:scale-105"
-          onClick={() => addToCart(product)}
+          onClick={() => handleAddToCart(product)}
         >
           <div className="relative w-full h-40">
             {product.image ? (
