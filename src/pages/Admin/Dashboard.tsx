@@ -18,7 +18,7 @@ const Dashboard: React.FC = () => {
       <Header />
       
       <div className="container mx-auto p-4">
-        <Tabs defaultValue="orders">
+        <Tabs defaultValue="stock">
           <TabsList className="mb-6">
             <TabsTrigger value="orders">
               <FileText className="h-4 w-4 mr-2" />
