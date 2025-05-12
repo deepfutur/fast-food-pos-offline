@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { usePOS } from '../../context/POSContext';
 import { Button } from '@/components/ui/button';
@@ -117,9 +118,8 @@ const ShoppingCart: React.FC = () => {
       
       {currentOrder && (
         <ReceiptPreview 
-          isOpen={showReceipt}
+          orderId={`preview-${Date.now()}`} 
           onClose={() => setShowReceipt(false)}
-          order={currentOrder}
         />
       )}
     </div>

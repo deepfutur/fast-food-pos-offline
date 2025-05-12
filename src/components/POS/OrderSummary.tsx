@@ -11,7 +11,9 @@ interface OrderSummaryProps {
 }
 
 const OrderSummary: React.FC<OrderSummaryProps> = ({ subtotal, tax, total, taxRate, cashAmount }) => {
-  const change = cashAmount ? Math.max(0, parseFloat(cashAmount) - total) : undefined;
+  const change = cashAmount && parseFloat(cashAmount) > 0 
+    ? Math.max(0, parseFloat(cashAmount) - total) 
+    : undefined;
 
   return (
     <div className="space-y-4 py-4">

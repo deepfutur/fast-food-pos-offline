@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import { CartItem, POSState, Product, User, Ingredient, Recipe } from '../types/pos';
-import { initialState } from '../data/mockData';
+import { products, categories, users, ingredients, recipes, businessInfo } from '../data/mockData';
 
 type POSAction = 
-  | { type: 'SET_CATEGORY'; payload: string }
+  | { type: 'SET_CATEGORY'; payload: string | null }
   | { type: 'ADD_TO_CART'; payload: Product }
   | { type: 'REMOVE_FROM_CART'; payload: string }
   | { type: 'UPDATE_QUANTITY'; payload: { id: string; quantity: number } }
@@ -68,13 +68,13 @@ const loadFromLocalStorage = (): Partial<POSState> => {
     const recipes = localStorage.getItem('pos_recipes');
     
     return {
-      products: products ? JSON.parse(products) : initialState.products,
-      categories: categories ? JSON.parse(categories) : initialState.categories,
-      users: users ? JSON.parse(users) : initialState.users,
-      orders: orders ? JSON.parse(orders) : initialState.orders,
-      businessInfo: businessInfo ? JSON.parse(businessInfo) : initialState.businessInfo,
-      ingredients: ingredients ? JSON.parse(ingredients) : initialState.ingredients,
-      recipes: recipes ? JSON.parse(recipes) : initialState.recipes,
+      products: products ? JSON.parse(products) : [],
+      categories: categories ? JSON.parse(categories) : [],
+      users: users ? JSON.parse(users) : [],
+      orders: orders ? JSON.parse(orders) : [],
+      businessInfo: businessInfo ? JSON.parse(businessInfo) : {},
+      ingredients: ingredients ? JSON.parse(ingredients) : [],
+      recipes: recipes ? JSON.parse(recipes) : [],
     };
   } catch (error) {
     console.error("Erreur lors du chargement depuis localStorage:", error);
@@ -82,29 +82,49 @@ const loadFromLocalStorage = (): Partial<POSState> => {
   }
 };
 
-const initialStateWithLocalStorage = {
-  ...initialState,
-  ...loadFromLocalStorage(),
+// Define initial state explicitly here instead of importing
+const initialState: POSState = {
+  products: products || [],
+  categories: categories || [],
+  cart: [],
+  orders: [],
   users: [
     {
       id: 'admin-1',
       name: 'Admin',
       pin: '2387',
-      role: 'admin' as const
+      role: 'admin'
     },
     {
       id: 'cashier-1',
       name: 'Caissier 1',
       pin: '9876',
-      role: 'cashier' as const
+      role: 'cashier'
     },
     {
       id: 'cashier-2',
       name: 'Caissier 2',
       pin: '5432',
-      role: 'cashier' as const
+      role: 'cashier'
     }
-  ]
+  ],
+  selectedCategory: null,
+  currentUser: null,
+  tax: 0.2,  // 20% VAT
+  businessInfo: businessInfo || {
+    name: 'My Restaurant',
+    address: '123 Main Street',
+    phone: '+1 234 567 890',
+    taxId: '12345678',
+  },
+  currency: 'MAD',
+  ingredients: ingredients || [],
+  recipes: recipes || [],
+};
+
+const initialStateWithLocalStorage = {
+  ...initialState,
+  ...loadFromLocalStorage(),
 };
 
 const posReducer = (state: POSState, action: POSAction): POSState => {

@@ -1,3 +1,4 @@
+
 export const products = [
   {
     id: 'burger-cheese',
@@ -105,12 +106,16 @@ export const users = [
   },
 ];
 
+export const tax = 0.2; // 20% VAT
+
+export const currency = 'MAD';
+
 export const businessInfo = {
   name: 'My Restaurant',
   address: '123 Main Street, Cityville',
   phone: '555-123-4567',
-  website: 'www.myrestaurant.com',
   taxId: '123456789',
+  website: 'www.myrestaurant.com',
 };
 
 export const ingredients = [

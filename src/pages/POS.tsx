@@ -28,7 +28,7 @@ const POS: React.FC = () => {
         toast({
           title: "Stock bas",
           description: `Le stock de ${ing.name} est bas (${ing.stock} ${ing.unit})`,
-          variant: "destructive", // Changed from "warning" to "destructive"
+          variant: "destructive",
         });
       });
     }
@@ -96,21 +96,33 @@ const POS: React.FC = () => {
   }, [state.products, state.recipes, state.currentUser]);
 
   return (
-    <POSLayout onAdminClick={handleAdminClick}>
+    <div className="h-full">
       <div className="h-full flex flex-col md:flex-row">
         <div className="w-full md:w-3/4 md:pr-4 flex flex-col h-full overflow-hidden">
-          <CategoryTabs 
-            categories={state.categories} 
-            selectedCategory={state.selectedCategory} 
-            onSelectCategory={handleSelectCategory} 
-          />
+          <div className="mb-4">
+            <button 
+              onClick={handleAdminClick}
+              className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded"
+            >
+              Admin
+            </button>
+          </div>
+          
+          <div>
+            <CategoryTabs 
+              categories={state.categories} 
+              selectedCategory={state.selectedCategory || ''} 
+              onSelectCategory={handleSelectCategory} 
+            />
+          </div>
+          
           <div className="flex-1 overflow-y-auto pb-4">
             <ProductGrid products={displayProducts} />
           </div>
         </div>
         
         <div className="w-full md:w-1/4 mt-4 md:mt-0">
-          <ShoppingCart onCheckout={openPayment} />
+          <ShoppingCart />
         </div>
       </div>
       
@@ -126,7 +138,7 @@ const POS: React.FC = () => {
           onClose={() => setCompletedOrderId(null)}
         />
       )}
-    </POSLayout>
+    </div>
   );
 };
 

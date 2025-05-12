@@ -55,7 +55,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ isOpen, onClose, onComple
               toast({
                 title: "Stock bas",
                 description: `Le stock de ${ingredient.name} est bas (${updatedIngredient.stock} ${ingredient.unit})`,
-                variant: "destructive", // Changed from "warning" to "destructive"
+                variant: "destructive",
               });
             }
           }
@@ -89,9 +89,9 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ isOpen, onClose, onComple
     // Enregistrer la transaction financière
     addTransaction({
       id: `trans-${Date.now()}`,
-      type: 'sale',
+      type: "credit", // Changed from "sale" to "credit"
       amount: total,
-      date: new Date(),
+      date: new Date().toISOString(), // Convert Date to string
       description: `Vente - ${state.cart.reduce((sum, item) => sum + item.quantity, 0)} produits`
     });
     
@@ -113,10 +113,16 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ isOpen, onClose, onComple
         <div className="grid gap-6">
           <PaymentMethods
             selectedMethod={paymentMethod}
-            onSelect={setPaymentMethod}
+            onMethodSelect={setPaymentMethod} // Changed from onSelect to onMethodSelect
           />
           
-          <OrderSummary />
+          <OrderSummary 
+            subtotal={getCartSubtotal()} 
+            tax={getCartTax()} 
+            total={getCartTotal()} 
+            taxRate={state.tax} 
+            cashAmount={cashAmount}
+          />
           
           {paymentMethod === 'cash' && (
             <div className="space-y-2">
