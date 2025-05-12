@@ -8,6 +8,7 @@ import PaymentMethods from './PaymentMethods';
 import OrderSummary from './OrderSummary';
 import { Input } from '@/components/ui/input';
 import { DollarSign } from 'lucide-react';
+import { useFinancialStore } from '../../services/financialService';
 
 interface PaymentDialogProps {
   isOpen: boolean;
@@ -20,19 +21,54 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ isOpen, onClose, onComple
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card' | 'voucher'>('cash');
   const [cashAmount, setCashAmount] = useState('');
   
+  // Utilisation du service financier
+  const { addTransaction } = useFinancialStore();
+  
   const handleComplete = () => {
+    const total = getCartTotal();
+    
+    // Vérifier le montant pour les paiements en espèces
     if (paymentMethod === 'cash') {
       const cashReceived = parseFloat(cashAmount);
-      if (isNaN(cashReceived) || cashReceived < getCartTotal()) {
+      if (isNaN(cashReceived) || cashReceived < total) {
         toast.error("Montant insuffisant");
         return;
       }
+      
+      // Compléter la commande dans le système POS
       completeOrder(paymentMethod, cashReceived);
+      
+      // Ajouter la transaction au système financier
+      addTransaction({
+        date: new Date().toISOString().split('T')[0],
+        description: `Vente (${state.cart.length} articles)`,
+        category: 'recette',
+        amount: total,
+        type: 'credit',
+        paymentMethod: 'espèces',
+        comment: `Payé: ${cashReceived.toFixed(2)}, Rendu: ${(cashReceived - total).toFixed(2)}`
+      });
+      
+      // Compléter la transaction
       onComplete(paymentMethod, cashReceived);
     } else {
+      // Compléter la commande dans le système POS
       completeOrder(paymentMethod);
+      
+      // Ajouter la transaction au système financier
+      addTransaction({
+        date: new Date().toISOString().split('T')[0],
+        description: `Vente (${state.cart.length} articles)`,
+        category: 'recette',
+        amount: total,
+        type: 'credit',
+        paymentMethod: paymentMethod === 'card' ? 'carte' : 'autre',
+      });
+      
+      // Compléter la transaction
       onComplete(paymentMethod);
     }
+    
     toast.success("Commande finalisée avec succès!");
     onClose();
   };

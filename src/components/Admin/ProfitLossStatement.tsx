@@ -1,6 +1,5 @@
 
-import React, { useState, useMemo, useEffect } from 'react';
-import { usePOS } from '@/context/POSContext';
+import React, { useState, useMemo } from 'react';
 import { format, parseISO, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import {
@@ -33,138 +32,12 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { TrendingUp, TrendingDown, Filter, FileText } from 'lucide-react';
+import { TrendingUp, TrendingDown, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toast } from '@/components/ui/use-toast';
+import { useFinancialStore, calculateFinancialMetrics } from '../../services/financialService';
 
-// Types
-interface FinancialTransaction {
-  id: string;
-  date: string;
-  description: string;
-  category: string;
-  amount: number;
-  type: 'debit' | 'credit';
-  paymentMethod: string;
-  comment?: string;
-}
-
-interface InventoryItem {
-  id: string;
-  name: string;
-  category: string;
-  quantity: number;
-  unit: string;
-  unitPrice: number;
-  supplier: string;
-  lastPurchaseDate: string;
-  notes?: string;
-}
-
-// Example data for demonstration (in a real app, this would come from context or API)
-const initialTransactions: FinancialTransaction[] = [
-  {
-    id: '1',
-    date: '2025-05-01',
-    description: 'Vente du jour',
-    category: 'recette',
-    amount: 3500,
-    type: 'credit',
-    paymentMethod: 'espèces',
-    comment: 'Bonne journée'
-  },
-  {
-    id: '2',
-    date: '2025-05-01',
-    description: 'Achat fromage',
-    category: 'achat',
-    amount: 850,
-    type: 'debit',
-    paymentMethod: 'carte',
-    comment: 'Fournisseur Fromages Délices'
-  },
-  {
-    id: '3',
-    date: '2025-05-02',
-    description: 'Vente du jour',
-    category: 'recette',
-    amount: 2800,
-    type: 'credit',
-    paymentMethod: 'espèces',
-  },
-  {
-    id: '4',
-    date: '2025-05-02',
-    description: 'Facture électricité',
-    category: 'charge',
-    amount: 450,
-    type: 'debit',
-    paymentMethod: 'virement',
-    comment: 'Référence: FACT-2025-452'
-  },
-  {
-    id: '5',
-    date: '2025-05-03',
-    description: 'Salaire serveur',
-    category: 'salaire',
-    amount: 1200,
-    type: 'debit',
-    paymentMethod: 'virement',
-  },
-  {
-    id: '6',
-    date: '2025-05-05',
-    description: 'Vente du jour',
-    category: 'recette',
-    amount: 4200,
-    type: 'credit',
-    paymentMethod: 'carte',
-  },
-];
-
-const inventoryData: InventoryItem[] = [
-  {
-    id: '1',
-    name: 'Fromage',
-    category: 'ingrédient frais',
-    quantity: 15,
-    unit: 'kg',
-    unitPrice: 60,
-    supplier: 'Fromages Délices',
-    lastPurchaseDate: '2025-05-01',
-    notes: 'Conservation au frigo'
-  },
-  {
-    id: '2',
-    name: 'Sauces',
-    category: 'ingrédient sec',
-    quantity: 30,
-    unit: 'bouteilles',
-    unitPrice: 25,
-    supplier: 'Épices & Co',
-    lastPurchaseDate: '2025-04-28',
-  },
-  {
-    id: '3',
-    name: 'Pain burger',
-    category: 'boulangerie',
-    quantity: 100,
-    unit: 'pièces',
-    unitPrice: 3,
-    supplier: 'Boulangerie Moderne',
-    lastPurchaseDate: '2025-05-04',
-  },
-  {
-    id: '4',
-    name: 'Contenants',
-    category: 'emballage',
-    quantity: 200,
-    unit: 'pièces',
-    unitPrice: 2,
-    supplier: 'Emballages Pro',
-    lastPurchaseDate: '2025-04-15',
-  },
-];
-
+// Types pour les types de dépenses
 interface ExpenseType {
   type: string;
   name: string;
@@ -181,23 +54,23 @@ const expenseTypes: ExpenseType[] = [
 ];
 
 const ProfitLossStatement: React.FC = () => {
-  const { state } = usePOS();
+  // Utiliser le store financier
+  const { transactions, inventory } = useFinancialStore();
+  
   const [selectedMonth, setSelectedMonth] = useState<Date>(new Date());
   const [periodType, setPeriodType] = useState<'monthly' | 'custom'>('monthly');
   const [startDate, setStartDate] = useState<Date>(startOfMonth(new Date()));
   const [endDate, setEndDate] = useState<Date>(endOfMonth(new Date()));
-  const [transactions, setTransactions] = useState<FinancialTransaction[]>(initialTransactions);
-  const [inventory, setInventory] = useState<InventoryItem[]>(inventoryData);
 
-  // Update date range based on selected period type
-  useEffect(() => {
+  // Mettre à jour les dates en fonction du type de période
+  React.useEffect(() => {
     if (periodType === 'monthly' && selectedMonth) {
       setStartDate(startOfMonth(selectedMonth));
       setEndDate(endOfMonth(selectedMonth));
     }
   }, [periodType, selectedMonth]);
 
-  // Filter transactions based on date range
+  // Filtrer les transactions en fonction de la plage de dates
   const filteredTransactions = useMemo(() => {
     return transactions.filter((transaction) => {
       const transactionDate = parseISO(transaction.date);
@@ -205,25 +78,12 @@ const ProfitLossStatement: React.FC = () => {
     });
   }, [transactions, startDate, endDate]);
 
-  // Calculate financial metrics
+  // Calculer les métriques financières
   const financialMetrics = useMemo(() => {
-    const sales = filteredTransactions
-      .filter(t => t.type === 'credit')
-      .reduce((sum, t) => sum + t.amount, 0);
-      
-    const expenses = filteredTransactions
-      .filter(t => t.type === 'debit')
-      .reduce((sum, t) => sum + t.amount, 0);
-      
-    const inventoryValue = inventory
-      .reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
-      
-    const profit = sales - expenses;
-    
-    return { sales, expenses, inventoryValue, profit };
+    return calculateFinancialMetrics(filteredTransactions, inventory);
   }, [filteredTransactions, inventory]);
 
-  // Group sales by date for chart
+  // Regrouper les ventes par date pour le graphique
   const salesByDate = useMemo(() => {
     const salesData: Record<string, { date: string, sales: number, expenses: number }> = {};
     
@@ -248,7 +108,7 @@ const ProfitLossStatement: React.FC = () => {
     return Object.values(salesData);
   }, [filteredTransactions]);
 
-  // Group expenses by category for chart
+  // Regrouper les dépenses par catégorie pour le graphique
   const expensesByCategory = useMemo(() => {
     const categorized: Record<string, number> = {};
     
@@ -267,9 +127,8 @@ const ProfitLossStatement: React.FC = () => {
     }));
   }, [filteredTransactions]);
 
-  // For export
+  // Exporter en CSV
   const exportToCSV = () => {
-    // Create CSV content
     const headers = ['Date', 'Description', 'Catégorie', 'Montant (DH)', 'Type', 'Mode de paiement'];
     
     const csvContent = [
@@ -284,7 +143,6 @@ const ProfitLossStatement: React.FC = () => {
       ].join(','))
     ].join('\n');
     
-    // Create and download file
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
@@ -296,6 +154,10 @@ const ProfitLossStatement: React.FC = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    toast({
+      title: "Export réussi",
+      description: "Le rapport financier a été exporté avec succès",
+    });
   };
 
   return (
@@ -308,7 +170,7 @@ const ProfitLossStatement: React.FC = () => {
         </Button>
       </div>
 
-      {/* Filters */}
+      {/* Filtres */}
       <Card>
         <CardHeader>
           <CardTitle>Période d'analyse</CardTitle>

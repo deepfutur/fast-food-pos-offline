@@ -18,90 +18,17 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   ChartContainer,
-  ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { format, parse, parseISO, startOfMonth, endOfMonth } from 'date-fns';
+import { format, parseISO, startOfMonth, endOfMonth } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Download, Plus, Trash2, FileSpreadsheet, LineChart } from 'lucide-react';
+import { Plus, Trash2, FileSpreadsheet, LineChart } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Tooltip } from 'recharts';
-
-// Types pour les transactions financières
-interface FinancialTransaction {
-  id: string;
-  date: string;
-  description: string;
-  category: string;
-  amount: number;
-  type: 'debit' | 'credit';
-  paymentMethod: string;
-  comment?: string;
-}
-
-// Données fictives pour démonstration
-const initialTransactions: FinancialTransaction[] = [
-  {
-    id: '1',
-    date: '2025-05-01',
-    description: 'Vente du jour',
-    category: 'recette',
-    amount: 3500,
-    type: 'credit',
-    paymentMethod: 'espèces',
-    comment: 'Bonne journée'
-  },
-  {
-    id: '2',
-    date: '2025-05-01',
-    description: 'Achat fromage',
-    category: 'achat',
-    amount: 850,
-    type: 'debit',
-    paymentMethod: 'carte',
-    comment: 'Fournisseur Fromages Délices'
-  },
-  {
-    id: '3',
-    date: '2025-05-02',
-    description: 'Vente du jour',
-    category: 'recette',
-    amount: 2800,
-    type: 'credit',
-    paymentMethod: 'espèces',
-  },
-  {
-    id: '4',
-    date: '2025-05-02',
-    description: 'Facture électricité',
-    category: 'charge',
-    amount: 450,
-    type: 'debit',
-    paymentMethod: 'virement',
-    comment: 'Référence: FACT-2025-452'
-  },
-  {
-    id: '5',
-    date: '2025-05-03',
-    description: 'Salaire serveur',
-    category: 'salaire',
-    amount: 1200,
-    type: 'debit',
-    paymentMethod: 'virement',
-  },
-  {
-    id: '6',
-    date: '2025-05-05',
-    description: 'Vente du jour',
-    category: 'recette',
-    amount: 4200,
-    type: 'credit',
-    paymentMethod: 'carte',
-  },
-];
+import { useFinancialStore, FinancialTransaction } from '../../services/financialService';
+import { toast } from '@/components/ui/use-toast';
 
 // Catégories prédéfinies
 const transactionCategories = [
@@ -125,8 +52,16 @@ const paymentMethods = [
 ];
 
 const FinancialReport: React.FC = () => {
-  const [transactions, setTransactions] = useState<FinancialTransaction[]>(initialTransactions);
-  const [filteredTransactions, setFilteredTransactions] = useState<FinancialTransaction[]>(transactions);
+  // Utiliser notre store financier
+  const { 
+    transactions, 
+    addTransaction, 
+    deleteTransaction,
+    recordSale,
+    recordPurchase
+  } = useFinancialStore();
+  
+  const [filteredTransactions, setFilteredTransactions] = useState<FinancialTransaction[]>([]);
   const [newTransaction, setNewTransaction] = useState<Partial<FinancialTransaction>>({
     date: format(new Date(), 'yyyy-MM-dd'),
     type: 'debit',
@@ -251,22 +186,66 @@ const FinancialReport: React.FC = () => {
   // Gérer l'ajout d'une nouvelle transaction
   const handleAddTransaction = () => {
     if (!newTransaction.description || !newTransaction.date) {
-      alert('Veuillez remplir tous les champs obligatoires');
+      toast({
+        title: "Erreur",
+        description: "Veuillez remplir tous les champs obligatoires",
+        variant: "destructive"
+      });
       return;
     }
 
-    const transaction: FinancialTransaction = {
-      id: Date.now().toString(),
-      date: newTransaction.date as string,
-      description: newTransaction.description as string,
-      category: newTransaction.category as string,
-      amount: newTransaction.amount as number,
-      type: newTransaction.type as 'debit' | 'credit',
-      paymentMethod: newTransaction.paymentMethod as string,
-      comment: newTransaction.comment,
-    };
-
-    setTransactions(prev => [...prev, transaction]);
+    // Déterminer si c'est un achat ou une vente pour mettre à jour l'inventaire
+    const isExpense = newTransaction.type === 'debit';
+    const isIncome = newTransaction.type === 'credit';
+    
+    // Pour un achat lié à des ingrédients ou des produits
+    if (isExpense && newTransaction.category === 'achat') {
+      // On pourrait demander des infos supplémentaires via un formulaire plus détaillé
+      // Pour cet exemple, on utilise des valeurs par défaut
+      recordPurchase(
+        newTransaction.description || 'Achat non spécifié',
+        1, // Quantité par défaut
+        newTransaction.amount || 0,
+        newTransaction.comment, // Utiliser le commentaire comme fournisseur
+        newTransaction.date
+      );
+      
+      toast({
+        title: "Achat enregistré",
+        description: "L'achat a été ajouté et l'inventaire mis à jour"
+      });
+    }
+    // Pour une vente
+    else if (isIncome && newTransaction.category === 'recette') {
+      recordSale(
+        newTransaction.description || 'Vente non spécifiée',
+        1, // Quantité par défaut
+        newTransaction.amount || 0,
+        newTransaction.date
+      );
+      
+      toast({
+        title: "Vente enregistrée",
+        description: "La vente a été ajoutée et l'inventaire mis à jour"
+      });
+    }
+    // Pour les autres types de transactions
+    else {
+      addTransaction({
+        date: newTransaction.date,
+        description: newTransaction.description || '',
+        category: newTransaction.category || 'autre',
+        amount: newTransaction.amount || 0,
+        type: newTransaction.type as 'debit' | 'credit',
+        paymentMethod: newTransaction.paymentMethod || 'espèces',
+        comment: newTransaction.comment,
+      });
+      
+      toast({
+        title: "Transaction ajoutée",
+        description: "La transaction a été enregistrée avec succès"
+      });
+    }
     
     // Réinitialiser le formulaire
     setNewTransaction({
@@ -280,7 +259,11 @@ const FinancialReport: React.FC = () => {
 
   // Supprimer une transaction
   const handleDeleteTransaction = (id: string) => {
-    setTransactions(transactions.filter(t => t.id !== id));
+    deleteTransaction(id);
+    toast({
+      title: "Transaction supprimée",
+      description: "La transaction a été supprimée avec succès"
+    });
   };
 
   // Exporter en CSV
@@ -311,6 +294,11 @@ const FinancialReport: React.FC = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    
+    toast({
+      title: "Export réussi",
+      description: "Le bilan financier a été exporté avec succès"
+    });
   };
 
   return (
