@@ -90,10 +90,12 @@ const ReceiptPreview: React.FC<ReceiptPreviewProps> = ({ orderId, onClose }) => 
               .justify-between { justify-content: space-between; }
               table { width: 100%; border-collapse: collapse; }
               td { padding: 4px 0; }
+              img { max-width: 100px; margin: 0 auto; display: block; }
             </style>
           </head>
           <body>
             <div class="receipt">
+              ${businessInfo.logo ? `<div class="text-center mb-4"><img src="${businessInfo.logo}" alt="${businessInfo.name}" /></div>` : ''}
               ${receiptHTML}
             </div>
             <script>
@@ -130,6 +132,12 @@ const ReceiptPreview: React.FC<ReceiptPreviewProps> = ({ orderId, onClose }) => 
         ref={receiptRef} 
         className="bg-white text-black p-4 font-mono text-sm border border-gray-300 rounded"
       >
+        {businessInfo.logo && (
+          <div className="text-center mb-4">
+            <img src={businessInfo.logo} alt={businessInfo.name} className="max-h-16 mx-auto" />
+          </div>
+        )}
+        
         <div className="text-center mb-4">
           <div className="font-bold text-lg">{businessInfo.name}</div>
           <div>{businessInfo.address}</div>
