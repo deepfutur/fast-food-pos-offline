@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { usePOS } from '../../context/POSContext';
 import { Button } from '@/components/ui/button';
@@ -31,7 +30,10 @@ const ShoppingCart: React.FC = () => {
     const orderId = `order-${Date.now()}`;
     setCompletedOrderId(orderId);
     setShowPayment(false);
-    setShowReceipt(true); // Automatically show receipt after payment
+    
+    // Explicitement afficher le reçu après le paiement
+    console.log("Payment complete, showing receipt for order:", orderId);
+    setTimeout(() => setShowReceipt(true), 100); // Petit délai pour s'assurer que tout est prêt
   };
   
   return (
@@ -98,10 +100,12 @@ const ShoppingCart: React.FC = () => {
         onComplete={handlePaymentComplete}
       />
       
+      {/* Afficher le reçu quand showReceipt est true et un orderId est disponible */}
       {showReceipt && completedOrderId && (
         <ReceiptPreview 
           orderId={completedOrderId} 
           onClose={() => {
+            console.log("Closing receipt");
             setShowReceipt(false);
             setCompletedOrderId(null);
           }}

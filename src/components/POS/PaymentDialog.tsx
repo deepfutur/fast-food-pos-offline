@@ -78,6 +78,8 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ isOpen, onClose, onComple
         });
         return;
       }
+      
+      // Important: Nous appelons completeOrder avec le paymentMethod et cashReceived
       completeOrder(paymentMethod, cashReceived);
     } else {
       completeOrder(paymentMethod);
@@ -102,6 +104,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ isOpen, onClose, onComple
       description: "La commande a été complétée avec succès",
     });
     
+    // Appel de onComplete pour déclencher l'affichage du reçu
     onComplete(paymentMethod, paymentMethod === 'cash' ? parseFloat(cashAmount) : undefined);
   };
 

@@ -74,7 +74,10 @@ const POS: React.FC = () => {
     const orderId = `order-${Date.now()}`;
     setCompletedOrderId(orderId);
     setIsPaymentOpen(false);
-    setShowReceipt(true); // Auto-show receipt after payment
+    
+    // Explicitement afficher le reçu après paiement
+    console.log("Payment complete in POS component, showing receipt:", orderId);
+    setTimeout(() => setShowReceipt(true), 100); // Petit délai pour s'assurer que tout est prêt
   };
   
   // Handle admin navigation
@@ -134,10 +137,12 @@ const POS: React.FC = () => {
         onComplete={handlePaymentComplete}
       />
       
+      {/* Afficher le reçu quand showReceipt est true et un orderId est disponible */}
       {showReceipt && completedOrderId && (
         <ReceiptPreview 
           orderId={completedOrderId}
           onClose={() => {
+            console.log("Closing receipt in POS component");
             setShowReceipt(false);
             setCompletedOrderId(null);
           }}
