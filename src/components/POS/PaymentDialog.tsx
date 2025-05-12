@@ -119,7 +119,12 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ isOpen, onClose, onComple
       onComplete(paymentMethod);
     }
     
-    toast.success("Commande finalisée avec succès!");
+    toast({
+      title: "Commande finalisée",
+      description: "La commande a été finalisée avec succès!",
+      variant: "default",
+    });
+    
     onClose();
   };
   

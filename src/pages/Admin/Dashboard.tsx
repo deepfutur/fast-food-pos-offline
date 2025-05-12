@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { FileText, ShoppingBag, Users, Settings, Package, BarChart2, CircleDollarSign } from 'lucide-react';
+import { FileText, ShoppingBag, Users, Settings, Package, BarChart2, CircleDollarSign, Utensils } from 'lucide-react';
 import MenuEditor from '@/components/Admin/MenuEditor';
 import UpdatePinForm from '@/components/Admin/UpdatePinForm';
 import OrderHistory from '@/components/Admin/OrderHistory';
@@ -11,6 +12,7 @@ import UserManager from '@/components/Admin/UserManager';
 import StockManager from '@/components/Admin/StockManager';
 import FinancialReport from '@/components/Admin/FinancialReport';
 import ProfitLossStatement from '@/components/Admin/ProfitLossStatement';
+import RecipeManager from '@/components/Admin/RecipeManager';
 import Header from '@/components/Layout/Header';
 
 const Dashboard: React.FC = () => {
@@ -19,7 +21,7 @@ const Dashboard: React.FC = () => {
       <Header />
       
       <div className="container mx-auto p-4">
-        <Tabs defaultValue="stock">
+        <Tabs defaultValue="recipes">
           <TabsList className="mb-6">
             <TabsTrigger value="orders">
               <FileText className="h-4 w-4 mr-2" />
@@ -36,6 +38,10 @@ const Dashboard: React.FC = () => {
             <TabsTrigger value="stock">
               <Package className="h-4 w-4 mr-2" />
               Stock
+            </TabsTrigger>
+            <TabsTrigger value="recipes">
+              <Utensils className="h-4 w-4 mr-2" />
+              Recettes
             </TabsTrigger>
             <TabsTrigger value="financial">
               <BarChart2 className="h-4 w-4 mr-2" />
@@ -83,6 +89,14 @@ const Dashboard: React.FC = () => {
             <Card>
               <CardContent className="p-6">
                 <StockManager />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="recipes">
+            <Card>
+              <CardContent className="p-6">
+                <RecipeManager />
               </CardContent>
             </Card>
           </TabsContent>
