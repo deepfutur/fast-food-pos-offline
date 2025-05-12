@@ -1,100 +1,132 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePOS } from '../context/POSContext';
-import CategoryTabs from '../components/POS/CategoryTabs';
+import POSLayout from '../components/Layout/POSLayout';
 import ProductGrid from '../components/POS/ProductGrid';
+import CategoryTabs from '../components/POS/CategoryTabs';
 import ShoppingCart from '../components/POS/ShoppingCart';
-import Header from '../components/Layout/Header';
-import { Product } from '../types/pos';
+import PaymentDialog from '../components/POS/PaymentDialog';
+import ReceiptPreview from '../components/POS/ReceiptPreview';
+import { useNavigate } from 'react-router-dom';
 import { toast } from '@/components/ui/use-toast';
-import { products as mockProducts } from '../data/mockData';
 
 const POS: React.FC = () => {
   const { state, dispatch } = usePOS();
-  const { products, selectedCategory, ingredients, recipes } = state;
-  const [displayProducts, setDisplayProducts] = useState<Product[]>([]);
+  const navigate = useNavigate();
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+  const [completedOrderId, setCompletedOrderId] = useState<string | null>(null);
+  const [displayProducts, setDisplayProducts] = useState(state.products);
   
-  // Force refresh products from mockData to ensure latest prices
+  // Check for low stock ingredients
   useEffect(() => {
-    console.log("Checking product prices in mockData:", 
-      mockProducts.filter(p => p.category === 'pizza').map(p => `${p.name}: ${p.price}`));
-    
-    // Force refresh of products 
-    mockProducts.forEach(product => {
-      dispatch({ type: 'UPDATE_PRODUCT', payload: product });
-    });
-    
-    // Verify pizza prices after refresh
-    setTimeout(() => {
-      console.log("Current product prices in state after refresh:", 
-        state.products.filter(p => p.category === 'pizza').map(p => `${p.name}: ${p.price}`));
-    }, 100);
-  }, [dispatch]);
-  
-  // Update display products when state.products changes
-  useEffect(() => {
-    setDisplayProducts(products);
-    console.log("Display products updated with latest state");
-  }, [products]);
-
-  // Check ingredient stock levels
-  useEffect(() => {
-    // Find ingredients that are below their minimum stock level
-    const lowStockIngredients = ingredients.filter(
+    const lowStockIngredients = state.ingredients.filter(
       ing => ing.stock <= (ing.minStock || 0)
     );
     
     if (lowStockIngredients.length > 0) {
-      // Show warning toast for low stock ingredients
-      toast({
-        title: "Ingrédients en stock bas",
-        description: `${lowStockIngredients.length} ingrédients ont un stock bas`,
-        variant: "warning",
+      lowStockIngredients.forEach(ing => {
+        toast({
+          title: "Stock bas",
+          description: `Le stock de ${ing.name} est bas (${ing.stock} ${ing.unit})`,
+          variant: "destructive", // Changed from "warning" to "destructive"
+        });
       });
-      
-      // Log details to console
-      console.log("Ingrédients en stock bas:", 
-        lowStockIngredients.map(ing => `${ing.name}: ${ing.stock}/${ing.minStock} ${ing.unit}`));
     }
-  }, [ingredients]);
+  }, [state.ingredients]);
   
-  // Filter products by category
-  const filteredProducts = selectedCategory
-    ? displayProducts.filter(product => product.category === selectedCategory)
-    : displayProducts.sort((a, b) => a.category.localeCompare(b.category));
-  
-  // Debug the filtering
+  // Filter products based on selected category
   useEffect(() => {
-    if (selectedCategory) {
-      console.log(`Filtering by category: ${selectedCategory}`);
-      console.log(`Filtered products count: ${filteredProducts.length}`);
-      if (filteredProducts.length === 0) {
-        // Check if the category exists in the products
-        const categoryExists = products.some(p => p.category === selectedCategory);
-        console.log(`Does category ${selectedCategory} exist in products? ${categoryExists}`);
-        console.log(`Available categories: ${Array.from(new Set(products.map(p => p.category)))}`);
-      }
+    const category = state.selectedCategory;
+    console.info("Current product prices in state after refresh:", 
+      state.products.map(p => `${p.name}: ${p.price}`));
+    
+    if (category) {
+      const filtered = state.products.filter((p) => p.category === category);
+      setDisplayProducts(filtered);
+    } else {
+      setDisplayProducts(state.products);
     }
-  }, [selectedCategory, filteredProducts, products]);
+    
+    console.info("Display products updated with latest state");
+  }, [state.selectedCategory, state.products]);
   
+  // Handle category selection
+  const handleSelectCategory = (category: string | null) => {
+    dispatch({ type: 'SET_CATEGORY', payload: category });
+  };
+  
+  // Open payment dialog
+  const openPayment = () => {
+    if (state.cart.length === 0) {
+      toast({
+        title: "Panier vide",
+        description: "Veuillez ajouter des produits au panier",
+        variant: "destructive",
+      });
+      return;
+    }
+    setIsPaymentOpen(true);
+  };
+  
+  // Handle completed payment and order
+  const handlePaymentComplete = () => {
+    const orderId = `order-${Date.now()}`;
+    setCompletedOrderId(orderId);
+    setIsPaymentOpen(false);
+  };
+  
+  // Handle admin navigation
+  const handleAdminClick = () => {
+    navigate('/admin');
+  };
+  
+  // Products with recipes check
+  useEffect(() => {
+    const productsWithoutRecipes = state.products.filter(
+      product => !state.recipes.some(recipe => recipe.productId === product.id)
+    );
+    
+    if (productsWithoutRecipes.length > 0 && state.currentUser?.role === 'admin') {
+      toast({
+        title: "Produits sans recettes",
+        description: `${productsWithoutRecipes.length} produits n'ont pas de recettes définies.`,
+        variant: "destructive",
+      });
+    }
+  }, [state.products, state.recipes, state.currentUser]);
+
   return (
-    <div className="h-screen flex flex-col">
-      <Header />
-      
-      <div className="flex-1 container mx-auto p-4 flex flex-col">
-        <CategoryTabs />
-        
-        <div className="flex flex-1 gap-4 overflow-hidden">
-          <div className="w-2/3 overflow-auto pb-4">
-            <ProductGrid products={filteredProducts} />
-          </div>
-          
-          <div className="w-1/3">
-            <ShoppingCart />
+    <POSLayout onAdminClick={handleAdminClick}>
+      <div className="h-full flex flex-col md:flex-row">
+        <div className="w-full md:w-3/4 md:pr-4 flex flex-col h-full overflow-hidden">
+          <CategoryTabs 
+            categories={state.categories} 
+            selectedCategory={state.selectedCategory} 
+            onSelectCategory={handleSelectCategory} 
+          />
+          <div className="flex-1 overflow-y-auto pb-4">
+            <ProductGrid products={displayProducts} />
           </div>
         </div>
+        
+        <div className="w-full md:w-1/4 mt-4 md:mt-0">
+          <ShoppingCart onCheckout={openPayment} />
+        </div>
       </div>
-    </div>
+      
+      <PaymentDialog 
+        isOpen={isPaymentOpen}
+        onClose={() => setIsPaymentOpen(false)}
+        onComplete={handlePaymentComplete}
+      />
+      
+      {completedOrderId && (
+        <ReceiptPreview 
+          orderId={completedOrderId}
+          onClose={() => setCompletedOrderId(null)}
+        />
+      )}
+    </POSLayout>
   );
 };
 

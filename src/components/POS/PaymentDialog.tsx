@@ -55,7 +55,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ isOpen, onClose, onComple
               toast({
                 title: "Stock bas",
                 description: `Le stock de ${ingredient.name} est bas (${updatedIngredient.stock} ${ingredient.unit})`,
-                variant: "warning",
+                variant: "destructive", // Changed from "warning" to "destructive"
               });
             }
           }
@@ -73,108 +73,88 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ isOpen, onClose, onComple
       if (isNaN(cashReceived) || cashReceived < total) {
         toast({
           title: "Montant insuffisant",
-          description: "Le montant reçu doit être au moins égal au total",
+          description: "Le montant reçu doit être supérieur ou égal au total",
           variant: "destructive",
         });
         return;
       }
-      
-      // Update ingredients stock based on recipes
-      updateIngredientsStock();
-      
-      // Compléter la commande dans le système POS
       completeOrder(paymentMethod, cashReceived);
-      
-      // Ajouter la transaction au système financier
-      addTransaction({
-        date: new Date().toISOString().split('T')[0],
-        description: `Vente (${state.cart.length} articles)`,
-        category: 'recette',
-        amount: total,
-        type: 'credit',
-        paymentMethod: 'espèces',
-        comment: `Payé: ${cashReceived.toFixed(2)}, Rendu: ${(cashReceived - total).toFixed(2)}`
-      });
-      
-      // Compléter la transaction
-      onComplete(paymentMethod, cashReceived);
     } else {
-      // Update ingredients stock based on recipes
-      updateIngredientsStock();
-      
-      // Compléter la commande dans le système POS
       completeOrder(paymentMethod);
-      
-      // Ajouter la transaction au système financier
-      addTransaction({
-        date: new Date().toISOString().split('T')[0],
-        description: `Vente (${state.cart.length} articles)`,
-        category: 'recette',
-        amount: total,
-        type: 'credit',
-        paymentMethod: paymentMethod === 'card' ? 'carte' : 'autre',
-      });
-      
-      // Compléter la transaction
-      onComplete(paymentMethod);
     }
     
-    toast({
-      title: "Commande finalisée",
-      description: "La commande a été finalisée avec succès!",
-      variant: "default",
+    // Mise à jour du stock d'ingrédients
+    updateIngredientsStock();
+    
+    // Enregistrer la transaction financière
+    addTransaction({
+      id: `trans-${Date.now()}`,
+      type: 'sale',
+      amount: total,
+      date: new Date(),
+      description: `Vente - ${state.cart.reduce((sum, item) => sum + item.quantity, 0)} produits`
     });
     
-    onClose();
+    toast({
+      title: "Paiement accepté",
+      description: "La commande a été complétée avec succès",
+    });
+    
+    onComplete(paymentMethod, paymentMethod === 'cash' ? parseFloat(cashAmount) : undefined);
   };
-  
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-md md:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Finaliser la commande</DialogTitle>
+          <DialogTitle>Paiement</DialogTitle>
         </DialogHeader>
         
-        <OrderSummary 
-          subtotal={getCartSubtotal()}
-          tax={getCartTax()}
-          total={getCartTotal()}
-          taxRate={state.tax}
-          cashAmount={cashAmount}
-        />
-        
-        <PaymentMethods 
-          selectedMethod={paymentMethod}
-          onMethodSelect={setPaymentMethod}
-        />
-        
-        {paymentMethod === 'cash' && (
-          <div className="mt-4 space-y-2">
-            <label htmlFor="cash-amount" className="font-semibold">
-              Montant reçu
-            </label>
-            <div className="relative">
-              <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
-              <Input
-                id="cash-amount"
-                type="number"
-                className="pl-10"
-                placeholder={`Minimum ${getCartTotal().toFixed(2)} MAD`}
-                value={cashAmount}
-                onChange={(e) => setCashAmount(e.target.value)}
-              />
+        <div className="grid gap-6">
+          <PaymentMethods
+            selectedMethod={paymentMethod}
+            onSelect={setPaymentMethod}
+          />
+          
+          <OrderSummary />
+          
+          {paymentMethod === 'cash' && (
+            <div className="space-y-2">
+              <label htmlFor="cash-amount" className="block text-sm font-medium">
+                Montant reçu
+              </label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2">
+                  <DollarSign className="h-4 w-4 text-muted-foreground" />
+                </span>
+                <Input
+                  id="cash-amount"
+                  type="number"
+                  min={getCartTotal()}
+                  step="0.01"
+                  className="pl-10"
+                  value={cashAmount}
+                  onChange={(e) => setCashAmount(e.target.value)}
+                  placeholder={`${getCartTotal().toFixed(2)} ou plus`}
+                />
+              </div>
+              {parseFloat(cashAmount) >= getCartTotal() && (
+                <div className="text-sm text-right">
+                  Monnaie: {(parseFloat(cashAmount) - getCartTotal()).toFixed(2)} {state.currency}
+                </div>
+              )}
             </div>
-          </div>
-        )}
+          )}
+        </div>
         
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Annuler</Button>
-          <Button 
-            className="bg-pos-success hover:bg-green-700"
-            onClick={handleComplete}
-            disabled={paymentMethod === 'cash' && (parseFloat(cashAmount) < getCartTotal() || isNaN(parseFloat(cashAmount)))}
-          >
-            Valider le paiement
+          <Button onClick={onClose} variant="outline">
+            Annuler
+          </Button>
+          <Button onClick={handleComplete}>
+            {paymentMethod === 'cash'
+              ? `Encaisser ${getCartTotal().toFixed(2)} ${state.currency}`
+              : `Payer ${getCartTotal().toFixed(2)} ${state.currency}`}
           </Button>
         </DialogFooter>
       </DialogContent>

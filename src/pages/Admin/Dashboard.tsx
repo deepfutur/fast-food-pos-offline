@@ -2,7 +2,7 @@
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { FileText, ShoppingBag, Users, Settings, Package, BarChart2, CircleDollarSign, Utensils } from 'lucide-react';
+import { FileText, ShoppingBag, Users, Settings, Package, BarChart2, CircleDollarSign, Utensils, Book } from 'lucide-react';
 import MenuEditor from '@/components/Admin/MenuEditor';
 import UpdatePinForm from '@/components/Admin/UpdatePinForm';
 import OrderHistory from '@/components/Admin/OrderHistory';
@@ -22,7 +22,7 @@ const Dashboard: React.FC = () => {
       
       <div className="container mx-auto p-4">
         <Tabs defaultValue="recipes">
-          <TabsList className="mb-6">
+          <TabsList className="mb-6 flex flex-wrap gap-2">
             <TabsTrigger value="orders">
               <FileText className="h-4 w-4 mr-2" />
               Commandes

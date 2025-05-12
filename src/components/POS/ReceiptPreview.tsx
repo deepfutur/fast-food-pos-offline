@@ -1,352 +1,220 @@
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { usePOS } from '../../context/POSContext';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { CartItem } from '../../types/pos';
-import { Printer, Download, FileImage } from 'lucide-react';
+import { Download, Printer } from 'lucide-react';
 import html2canvas from 'html2canvas';
+import { toast } from '@/components/ui/use-toast';
 
 interface ReceiptPreviewProps {
-  isOpen: boolean;
+  orderId: string;
   onClose: () => void;
-  order: {
-    items: CartItem[];
-    subtotal: number;
-    tax: number;
-    total: number;
-    paymentMethod: 'cash' | 'card' | 'voucher';
-    cashReceived?: number;
-    changeDue?: number;
-  };
 }
 
-const ReceiptPreview: React.FC<ReceiptPreviewProps> = ({ isOpen, onClose, order }) => {
+const ReceiptPreview: React.FC<ReceiptPreviewProps> = ({ orderId, onClose }) => {
   const { state } = usePOS();
-  const { businessInfo } = state;
-  const date = new Date().toLocaleDateString('fr-FR');
-  const time = new Date().toLocaleTimeString('fr-FR');
+  const { orders, businessInfo, currency } = state;
+  const receiptRef = useRef<HTMLDivElement>(null);
   
-  const handlePrint = () => {
-    // Create a printable version of the receipt with correct styling
-    const receiptContent = document.querySelector('.receipt-content');
-    if (!receiptContent) return;
-    
-    // Create a new window for printing
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) {
-      toast.error("Impossible d'ouvrir la fenêtre d'impression");
-      return;
+  const order = orders.find(o => o.id === orderId);
+  
+  if (!order) {
+    return <div>Commande non trouvée</div>;
+  }
+  
+  const date = new Date(order.timestamp);
+  const formattedDate = `${date.toLocaleDateString('fr-FR')} ${date.toLocaleTimeString('fr-FR')}`;
+  
+  const handleDownload = async () => {
+    if (receiptRef.current) {
+      try {
+        // Apply print-specific styles
+        const elements = receiptRef.current.querySelectorAll('*');
+        elements.forEach(el => {
+          (el as HTMLElement).style.color = 'black';
+          (el as HTMLElement).style.backgroundColor = 'white';
+        });
+        
+        const canvas = await html2canvas(receiptRef.current, {
+          scale: 2, // Higher quality
+          backgroundColor: '#ffffff',
+        });
+        
+        const image = canvas.toDataURL('image/png');
+        
+        // Create a temporary link to download the image
+        const link = document.createElement('a');
+        link.href = image;
+        link.download = `reçu-${order.id}.png`;
+        link.click();
+        
+        toast({
+          title: "Téléchargement réussi",
+          description: "Le reçu a été téléchargé avec succès",
+        });
+      } catch (error) {
+        console.error('Error downloading receipt:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de télécharger le reçu",
+          variant: "destructive",
+        });
+      }
     }
-    
-    // Get business logo URL
-    const logoImg = receiptContent.querySelector('img');
-    const logoSrc = logoImg ? logoImg.getAttribute('src') : '';
-    
-    printWindow.document.open();
-    printWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Reçu - ${businessInfo.name}</title>
-          <meta charset="UTF-8">
-          <style>
-            body { 
-              font-family: monospace; 
-              margin: 0;
-              padding: 0;
-            }
-            .print-container { 
-              width: 80mm; 
-              margin: 0 auto; 
-              padding: 10px;
-            }
-            .logo-container {
-              width: 100%;
-              text-align: center;
-              margin-bottom: 10px;
-            }
-            .logo-container img {
-              max-width: 100px;
-              height: auto;
-            }
-            table { 
-              width: 100%;
-              border-collapse: collapse; 
-            }
-            .text-right { text-align: right; }
-            .text-center { text-align: center; }
-            .border-t { 
-              border-top: 1px dashed #000; 
-              margin-top: 8px; 
-              padding-top: 8px; 
-            }
-            .border-b { 
-              border-bottom: 1px dashed #000; 
-              margin-bottom: 8px; 
-              padding-bottom: 8px; 
-            }
-            .font-bold { font-weight: bold; }
-            @media print {
-              body { width: 80mm; }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="print-container">
-            <div class="text-center">
-              <div class="logo-container">
-                ${logoSrc ? `<img src="${logoSrc}" alt="${businessInfo.name}" />` : ''}
-              </div>
-              <div class="font-bold" style="font-size: 16px;">${businessInfo.name}</div>
-              <div>${businessInfo.address}</div>
-              <div>Tel: ${businessInfo.phone}</div>
-              <div>TVA: ${businessInfo.taxId}</div>
-              <div class="border-t"></div>
-              <div>Ticket de Caisse</div>
-              <div class="border-b"></div>
-              <div style="text-align: left;">
-                Date: ${date} ${time}
-              </div>
-            </div>
-            
-            <table class="w-full text-left" style="margin-top: 10px;">
-              <thead>
-                <tr>
-                  <th style="width: 50%; text-align: left;">Article</th>
-                  <th style="width: 16%; text-align: right;">Qté</th>
-                  <th style="width: 16%; text-align: right;">Prix</th>
-                  <th style="width: 16%; text-align: right;">Total</th>
-                </tr>
-                <tr>
-                  <td colspan="4" class="border-b"></td>
-                </tr>
-              </thead>
-              <tbody>
-                ${order.items.map(item => `
-                <tr>
-                  <td style="text-align: left;">${item.name}</td>
-                  <td style="text-align: right;">${item.quantity}</td>
-                  <td style="text-align: right;">${item.price.toFixed(2)}</td>
-                  <td style="text-align: right;">${(item.price * item.quantity).toFixed(2)}</td>
-                </tr>
-                `).join('')}
-                <tr>
-                  <td colspan="4" class="border-b"></td>
-                </tr>
-              </tbody>
-              <tfoot>
-                <tr>
-                  <td colspan="2" style="text-align: right; font-weight: 600;">Sous-total:</td>
-                  <td colspan="2" style="text-align: right;">${order.subtotal.toFixed(2)} MAD</td>
-                </tr>
-                <tr>
-                  <td colspan="2" style="text-align: right; font-weight: 600;">TVA (${(state.tax * 100).toFixed(0)}%):</td>
-                  <td colspan="2" style="text-align: right;">${order.tax.toFixed(2)} MAD</td>
-                </tr>
-                <tr>
-                  <td colspan="2" style="text-align: right; font-weight: 700;">TOTAL:</td>
-                  <td colspan="2" style="text-align: right; font-weight: 700;">${order.total.toFixed(2)} MAD</td>
-                </tr>
-                
-                ${order.paymentMethod === 'cash' && order.cashReceived && order.changeDue !== undefined ? `
-                <tr>
-                  <td colspan="2" style="text-align: right;">Montant reçu:</td>
-                  <td colspan="2" style="text-align: right;">${order.cashReceived.toFixed(2)} MAD</td>
-                </tr>
-                <tr>
-                  <td colspan="2" style="text-align: right;">Monnaie rendue:</td>
-                  <td colspan="2" style="text-align: right;">${order.changeDue.toFixed(2)} MAD</td>
-                </tr>
-                ` : ''}
-                <tr>
-                  <td colspan="4" style="text-align: center; padding-top: 8px;">
-                    Paiement par ${
-                      order.paymentMethod === 'cash' ? 'Espèces' :
-                      order.paymentMethod === 'card' ? 'Carte Bancaire' :
-                      'Bon'
-                    }
-                  </td>
-                </tr>
-              </tfoot>
-            </table>
-            
-            <div style="text-align: center; margin-top: 20px;">
-              <p>Merci de votre visite!</p>
-              <p>À bientôt!</p>
-            </div>
-          </div>
-          <script>
-            window.onload = function() {
-              setTimeout(function() {
-                window.print();
-                window.close();
-              }, 500);
-            };
-          </script>
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
   };
 
-  const handleDownload = async () => {
-    const receiptContent = document.querySelector('.receipt-content');
-    if (!receiptContent) return;
-    
-    try {
-      // Set a white background for the canvas
-      const originalBackground = receiptContent.style.background;
-      receiptContent.style.background = 'white';
-      
-      // Convert the receipt to canvas
-      const canvas = await html2canvas(receiptContent as HTMLElement, {
-        backgroundColor: '#ffffff',
-        scale: 2, // Better resolution
-        logging: false,
-        useCORS: true, // Allow images from other domains
-        allowTaint: true
-      });
-      
-      // Reset the background
-      receiptContent.style.background = originalBackground;
-      
-      // Convert canvas to PNG data URL
-      const dataUrl = canvas.toDataURL('image/png');
-      
-      // Create download link
-      const a = document.createElement('a');
-      a.href = dataUrl;
-      a.download = `recu-${businessInfo.name}-${date.replace(/\//g, '-')}.png`;
-      document.body.appendChild(a);
-      a.click();
-      
-      // Clean up
-      setTimeout(() => {
-        document.body.removeChild(a);
-      }, 100);
-    } catch (error) {
-      console.error("Erreur lors de la génération du PNG:", error);
+  const handlePrint = () => {
+    if (receiptRef.current) {
+      const printWindow = window.open('', '', 'width=600,height=600');
+      if (printWindow) {
+        const receiptHTML = receiptRef.current.innerHTML;
+        
+        printWindow.document.open();
+        printWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Reçu ${order.id}</title>
+            <style>
+              body { font-family: monospace; color: black; background-color: white; }
+              .receipt { padding: 20px; width: 300px; margin: 0 auto; }
+              .text-center { text-align: center; }
+              .mb-2 { margin-bottom: 8px; }
+              .mb-4 { margin-bottom: 16px; }
+              .text-xs { font-size: 12px; }
+              .text-sm { font-size: 14px; }
+              .font-bold { font-weight: bold; }
+              .border-t { border-top: 1px dashed #ccc; padding-top: 8px; }
+              .border-b { border-bottom: 1px dashed #ccc; padding-bottom: 8px; }
+              .flex { display: flex; }
+              .justify-between { justify-content: space-between; }
+              table { width: 100%; border-collapse: collapse; }
+              td { padding: 4px 0; }
+            </style>
+          </head>
+          <body>
+            <div class="receipt">
+              ${receiptHTML}
+            </div>
+            <script>
+              window.onload = function() { window.print(); setTimeout(function() { window.close(); }, 500); };
+            </script>
+          </body>
+          </html>
+        `);
+        printWindow.document.close();
+      } else {
+        toast({
+          title: "Erreur",
+          description: "Les popups sont peut-être bloqués par votre navigateur",
+          variant: "destructive",
+        });
+      }
     }
   };
-  
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Aperçu du Ticket</DialogTitle>
-        </DialogHeader>
+    <div className="bg-white text-black p-6 rounded-lg max-w-md mx-auto">
+      <div className="flex justify-between mb-6">
+        <Button variant="outline" onClick={handlePrint} className="flex items-center">
+          <Printer className="mr-2 h-4 w-4" />
+          Imprimer
+        </Button>
+        <Button variant="outline" onClick={handleDownload} className="flex items-center">
+          <Download className="mr-2 h-4 w-4" />
+          Télécharger
+        </Button>
+      </div>
+      
+      <div 
+        ref={receiptRef} 
+        className="bg-white text-black p-4 font-mono text-sm border border-gray-300 rounded"
+      >
+        <div className="text-center mb-4">
+          <div className="font-bold text-lg">{businessInfo.name}</div>
+          <div>{businessInfo.address}</div>
+          <div>{businessInfo.phone}</div>
+          {businessInfo.taxId && <div>TVA: {businessInfo.taxId}</div>}
+        </div>
         
-        <div className="receipt-content bg-white p-6 font-mono text-sm border mx-auto w-80">
-          <div className="text-center mb-4">
-            <div className="mx-auto w-32 h-32 mb-2">
-              <img 
-                src="/lovable-uploads/bd9aae2b-67cd-4156-be07-dae9877a6d5a.png" 
-                alt="Deli in the Box" 
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <div className="font-bold text-lg">{businessInfo.name}</div>
-            <div>{businessInfo.address}</div>
-            <div>Tel: {businessInfo.phone}</div>
-            <div>TVA: {businessInfo.taxId}</div>
-            <div className="border-t border-dashed my-2"></div>
-            <div>Ticket de Caisse</div>
-            <div className="border-b border-dashed my-2"></div>
-            <div className="text-left">
-              Date: {date} {time}
-            </div>
+        <div className="mb-4">
+          <div className="flex justify-between">
+            <span>Reçu #:</span>
+            <span>{order.id.replace('order-', '')}</span>
           </div>
-          
-          <table className="w-full text-left">
-            <thead>
-              <tr>
-                <th className="w-1/2">Article</th>
-                <th className="w-1/6 text-right">Qté</th>
-                <th className="w-1/6 text-right">Prix</th>
-                <th className="w-1/6 text-right">Total</th>
-              </tr>
-              <tr>
-                <td colSpan={4} className="border-b border-dashed py-1"></td>
-              </tr>
-            </thead>
-            <tbody>
-              {order.items.map((item, index) => (
-                <tr key={index}>
-                  <td className="truncate pr-1">{item.name}</td>
-                  <td className="text-right">{item.quantity}</td>
-                  <td className="text-right">{item.price.toFixed(2)}</td>
-                  <td className="text-right">{(item.price * item.quantity).toFixed(2)}</td>
-                </tr>
-              ))}
-              <tr>
-                <td colSpan={4} className="border-b border-dashed py-1"></td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colSpan={2} className="text-right font-semibold">Sous-total:</td>
-                <td colSpan={2} className="text-right">{order.subtotal.toFixed(2)} MAD</td>
-              </tr>
-              <tr>
-                <td colSpan={2} className="text-right font-semibold">TVA ({(state.tax * 100).toFixed(0)}%):</td>
-                <td colSpan={2} className="text-right">{order.tax.toFixed(2)} MAD</td>
-              </tr>
-              <tr>
-                <td colSpan={2} className="text-right font-bold">TOTAL:</td>
-                <td colSpan={2} className="text-right font-bold">{order.total.toFixed(2)} MAD</td>
-              </tr>
-              
-              {order.paymentMethod === 'cash' && order.cashReceived && order.changeDue !== undefined && (
-                <>
-                  <tr>
-                    <td colSpan={2} className="text-right">Montant reçu:</td>
-                    <td colSpan={2} className="text-right">{order.cashReceived.toFixed(2)} MAD</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={2} className="text-right">Monnaie rendue:</td>
-                    <td colSpan={2} className="text-right">{order.changeDue.toFixed(2)} MAD</td>
-                  </tr>
-                </>
-              )}
-              <tr>
-                <td colSpan={4} className="text-center py-2">
-                  Paiement par {
-                    order.paymentMethod === 'cash' ? 'Espèces' :
-                    order.paymentMethod === 'card' ? 'Carte Bancaire' :
-                    'Bon'
-                  }
-                </td>
-              </tr>
-            </tfoot>
-          </table>
-          
-          <div className="text-center mt-6">
-            <p>Merci de votre visite!</p>
-            <p>À bientôt!</p>
+          <div className="flex justify-between">
+            <span>Date:</span>
+            <span>{formattedDate}</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Caissier:</span>
+            <span>{state.users.find(u => u.id === order.cashierId)?.name || 'Inconnu'}</span>
           </div>
         </div>
         
-        <DialogFooter className="flex gap-2">
-          <Button variant="outline" onClick={onClose}>Fermer</Button>
-          <Button 
-            onClick={handleDownload} 
-            variant="outline"
-            className="bg-pos-primary text-white hover:bg-red-700"
-          >
-            <FileImage className="mr-2 h-4 w-4" />
-            Télécharger PNG
-          </Button>
-          <Button 
-            onClick={handlePrint}
-            className="bg-pos-primary hover:bg-red-700"
-          >
-            <Printer className="mr-2 h-4 w-4" />
-            Imprimer
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        <div className="border-t border-b border-gray-300 py-2 mb-4">
+          <table className="w-full text-xs">
+            <tbody>
+              {order.items.map((item, index) => (
+                <tr key={index}>
+                  <td>{item.quantity}x</td>
+                  <td>{item.name}</td>
+                  <td className="text-right">{(item.price * item.quantity).toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        
+        <div className="mb-4">
+          <div className="flex justify-between">
+            <span>Sous-total:</span>
+            <span>{order.subtotal.toFixed(2)} {currency}</span>
+          </div>
+          <div className="flex justify-between">
+            <span>TVA ({(state.tax * 100).toFixed(0)}%):</span>
+            <span>{order.tax.toFixed(2)} {currency}</span>
+          </div>
+          <div className="flex justify-between font-bold">
+            <span>Total:</span>
+            <span>{order.total.toFixed(2)} {currency}</span>
+          </div>
+        </div>
+        
+        <div className="mb-4">
+          <div className="flex justify-between">
+            <span>Méthode:</span>
+            <span>
+              {order.paymentMethod === 'cash' ? 'Espèces' : 
+                order.paymentMethod === 'card' ? 'Carte' : 'Bon'}
+            </span>
+          </div>
+          {order.paymentMethod === 'cash' && order.cashReceived && (
+            <>
+              <div className="flex justify-between">
+                <span>Montant reçu:</span>
+                <span>{order.cashReceived.toFixed(2)} {currency}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Monnaie:</span>
+                <span>{(order.cashReceived - order.total).toFixed(2)} {currency}</span>
+              </div>
+            </>
+          )}
+        </div>
+        
+        <div className="text-center text-xs">
+          <div className="mb-2">Merci de votre visite!</div>
+          {businessInfo.website && <div>{businessInfo.website}</div>}
+        </div>
+      </div>
+      
+      <div className="mt-6 text-center">
+        <Button onClick={onClose} variant="secondary">
+          Fermer
+        </Button>
+      </div>
+    </div>
   );
 };
 

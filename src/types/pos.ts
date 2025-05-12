@@ -1,4 +1,3 @@
-
 export interface Product {
   id: string;
   name: string;
@@ -80,6 +79,14 @@ export interface User {
   role: 'admin' | 'cashier';
 }
 
+export interface BusinessInfo {
+  name: string;
+  address: string;
+  phone: string;
+  taxId: string;
+  logo?: string;
+}
+
 export interface POSState {
   products: Product[];
   categories: Category[];
@@ -89,14 +96,8 @@ export interface POSState {
   selectedCategory: string | null;
   currentUser: User | null;
   tax: number;
-  businessInfo: {
-    name: string;
-    address: string;
-    phone: string;
-    taxId: string;
-    logo?: string;
-  };
-  currency: 'EUR' | 'XAF' | 'USD' | 'MAD';
+  businessInfo: BusinessInfo;
+  currency: string;
   ingredients: Ingredient[];
   recipes: Recipe[];
 }
