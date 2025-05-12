@@ -27,23 +27,105 @@ const ReceiptPreview: React.FC<ReceiptPreviewProps> = ({ isOpen, onClose, order 
   const time = new Date().toLocaleTimeString('fr-FR');
   
   const handlePrint = () => {
-    window.print();
-    onClose();
+    // Create a printable version of the receipt with correct styling
+    const printContent = document.createElement('div');
+    
+    // Copy the receipt content
+    const receiptContent = document.querySelector('.receipt-content');
+    if (receiptContent) {
+      printContent.innerHTML = receiptContent.innerHTML;
+      
+      // Apply print-specific styles
+      const style = document.createElement('style');
+      style.textContent = `
+        body { font-family: monospace; }
+        .print-container { width: 80mm; margin: 0 auto; }
+        img { max-width: 100%; height: auto; }
+        table { width: 100%; }
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+        .border-t, .border-b { border-top: 1px dashed #000; border-bottom: 1px dashed #000; margin: 8px 0; padding: 8px 0; }
+        @media print {
+          body { width: 80mm; }
+          .no-print { display: none; }
+        }
+      `;
+      
+      // Create a new window for printing
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.open();
+        printWindow.document.write(`
+          <html>
+            <head>
+              <title>Reçu - ${businessInfo.name}</title>
+              ${style.outerHTML}
+            </head>
+            <body>
+              <div class="print-container">
+                ${printContent.innerHTML}
+              </div>
+              <script>
+                window.onload = function() {
+                  setTimeout(function() {
+                    window.print();
+                    window.close();
+                  }, 500);
+                };
+              </script>
+            </body>
+          </html>
+        `);
+        printWindow.document.close();
+      }
+    }
   };
 
   const handleDownload = () => {
+    // Create a downloadable HTML version of the receipt
     const receiptContent = document.querySelector('.receipt-content');
     if (receiptContent) {
-      const content = receiptContent.innerHTML;
-      const blob = new Blob([content], { type: 'text/html' });
+      // Create full HTML document for download
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Reçu - ${businessInfo.name}</title>
+            <meta charset="UTF-8">
+            <style>
+              body { font-family: monospace; }
+              .container { width: 80mm; margin: 0 auto; }
+              img { max-width: 100%; height: auto; }
+              table { width: 100%; }
+              .text-right { text-align: right; }
+              .text-center { text-align: center; }
+              .border-t, .border-b { border-top: 1px dashed #000; border-bottom: 1px dashed #000; margin: 8px 0; padding: 8px 0; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              ${receiptContent.innerHTML}
+            </div>
+          </body>
+        </html>
+      `;
+      
+      // Create a Blob with the HTML content
+      const blob = new Blob([htmlContent], { type: 'text/html' });
       const url = URL.createObjectURL(blob);
+      
+      // Create a download link and trigger the download
       const a = document.createElement('a');
       a.href = url;
-      a.download = `recu-${date.replace(/\//g, '-')}-${time.replace(/:/g, '-')}.html`;
+      a.download = `recu-${businessInfo.name}-${date.replace(/\//g, '-')}.html`;
       document.body.appendChild(a);
       a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      
+      // Clean up
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 100);
     }
   };
   
