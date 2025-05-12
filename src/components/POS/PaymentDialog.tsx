@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { usePOS } from '../../context/POSContext';
-import { toast } from '@/components/ui/sonner';
+import { toast } from '@/components/ui/use-toast';
 import PaymentMethods from './PaymentMethods';
 import OrderSummary from './OrderSummary';
 import { Input } from '@/components/ui/input';
@@ -17,12 +17,52 @@ interface PaymentDialogProps {
 }
 
 const PaymentDialog: React.FC<PaymentDialogProps> = ({ isOpen, onClose, onComplete }) => {
-  const { getCartSubtotal, getCartTotal, getCartTax, completeOrder, state } = usePOS();
+  const { getCartSubtotal, getCartTotal, getCartTax, completeOrder, state, dispatch } = usePOS();
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card' | 'voucher'>('cash');
   const [cashAmount, setCashAmount] = useState('');
   
   // Utilisation du service financier
   const { addTransaction } = useFinancialStore();
+  
+  const updateIngredientsStock = () => {
+    // For each item in the cart, find its recipe and update ingredient stock
+    state.cart.forEach(cartItem => {
+      const recipe = state.recipes.find(recipe => recipe.productId === cartItem.productId);
+      
+      if (recipe) {
+        // For each ingredient in the recipe, reduce stock by quantity × number of items
+        recipe.ingredients.forEach(recipeItem => {
+          const ingredient = state.ingredients.find(ing => ing.id === recipeItem.ingredientId);
+          
+          if (ingredient) {
+            // Calculate how much is used (recipe quantity × number of items ordered)
+            const quantityUsed = recipeItem.quantity * cartItem.quantity;
+            
+            // Update ingredient stock
+            const updatedIngredient = {
+              ...ingredient,
+              stock: Math.max(0, ingredient.stock - quantityUsed)
+            };
+            
+            // Dispatch update action
+            dispatch({ 
+              type: 'UPDATE_INGREDIENT', 
+              payload: updatedIngredient 
+            });
+            
+            // Alert if stock is low
+            if (updatedIngredient.stock <= (ingredient.minStock || 0)) {
+              toast({
+                title: "Stock bas",
+                description: `Le stock de ${ingredient.name} est bas (${updatedIngredient.stock} ${ingredient.unit})`,
+                variant: "warning",
+              });
+            }
+          }
+        });
+      }
+    });
+  };
   
   const handleComplete = () => {
     const total = getCartTotal();
@@ -31,9 +71,16 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ isOpen, onClose, onComple
     if (paymentMethod === 'cash') {
       const cashReceived = parseFloat(cashAmount);
       if (isNaN(cashReceived) || cashReceived < total) {
-        toast.error("Montant insuffisant");
+        toast({
+          title: "Montant insuffisant",
+          description: "Le montant reçu doit être au moins égal au total",
+          variant: "destructive",
+        });
         return;
       }
+      
+      // Update ingredients stock based on recipes
+      updateIngredientsStock();
       
       // Compléter la commande dans le système POS
       completeOrder(paymentMethod, cashReceived);
@@ -52,6 +99,9 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ isOpen, onClose, onComple
       // Compléter la transaction
       onComplete(paymentMethod, cashReceived);
     } else {
+      // Update ingredients stock based on recipes
+      updateIngredientsStock();
+      
       // Compléter la commande dans le système POS
       completeOrder(paymentMethod);
       

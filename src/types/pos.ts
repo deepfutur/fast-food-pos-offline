@@ -14,9 +14,29 @@ export interface ProductOption {
   name: string;
   choices: {
     id: string;
-    name: string;
+    choiceName: string;
     price: number;
   }[];
+}
+
+export interface Ingredient {
+  id: string;
+  name: string;
+  unit: string;
+  stock: number;
+  minStock?: number;
+  unitPrice: number;
+  category: string;
+}
+
+export interface RecipeItem {
+  ingredientId: string;
+  quantity: number;
+}
+
+export interface Recipe {
+  productId: string;
+  ingredients: RecipeItem[];
 }
 
 export interface Category {
@@ -77,4 +97,6 @@ export interface POSState {
     logo?: string;
   };
   currency: 'EUR' | 'XAF' | 'USD' | 'MAD';
+  ingredients: Ingredient[];
+  recipes: Recipe[];
 }

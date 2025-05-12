@@ -1,5 +1,5 @@
 
-import { Category, Product, User, POSState } from '../types/pos';
+import { Category, Product, User, POSState, Ingredient, Recipe } from '../types/pos';
 
 export const categories: Category[] = [
   { id: 'sandwiches', name: 'Sandwichs' },
@@ -489,6 +489,188 @@ export const users: User[] = [
   }
 ];
 
+// Initial ingredients
+export const ingredients: Ingredient[] = [
+  {
+    id: 'ingredient-1',
+    name: 'Pain à burger',
+    unit: 'pièce',
+    stock: 100,
+    minStock: 20,
+    unitPrice: 2.00,
+    category: 'boulangerie'
+  },
+  {
+    id: 'ingredient-2',
+    name: 'Steak de bœuf',
+    unit: 'pièce',
+    stock: 80,
+    minStock: 15,
+    unitPrice: 8.00,
+    category: 'viande'
+  },
+  {
+    id: 'ingredient-3',
+    name: 'Fromage Cheddar',
+    unit: 'tranche',
+    stock: 150,
+    minStock: 30,
+    unitPrice: 1.50,
+    category: 'produit frais'
+  },
+  {
+    id: 'ingredient-4',
+    name: 'Tomate',
+    unit: 'kg',
+    stock: 25,
+    minStock: 5,
+    unitPrice: 12.00,
+    category: 'légume'
+  },
+  {
+    id: 'ingredient-5',
+    name: 'Laitue',
+    unit: 'kg',
+    stock: 15,
+    minStock: 3,
+    unitPrice: 10.00,
+    category: 'légume'
+  },
+  {
+    id: 'ingredient-6',
+    name: 'Sauce ketchup',
+    unit: 'kg',
+    stock: 10,
+    minStock: 2,
+    unitPrice: 20.00,
+    category: 'sauce'
+  },
+  {
+    id: 'ingredient-7',
+    name: 'Sauce mayonnaise',
+    unit: 'kg',
+    stock: 10,
+    minStock: 2,
+    unitPrice: 22.00,
+    category: 'sauce'
+  },
+  {
+    id: 'ingredient-8',
+    name: 'Farine à pizza',
+    unit: 'kg',
+    stock: 50,
+    minStock: 10,
+    unitPrice: 8.00,
+    category: 'épicerie'
+  },
+  {
+    id: 'ingredient-9',
+    name: 'Sauce tomate',
+    unit: 'kg',
+    stock: 30,
+    minStock: 5,
+    unitPrice: 15.00,
+    category: 'sauce'
+  },
+  {
+    id: 'ingredient-10',
+    name: 'Mozzarella',
+    unit: 'kg',
+    stock: 20,
+    minStock: 4,
+    unitPrice: 40.00,
+    category: 'produit frais'
+  },
+  {
+    id: 'ingredient-11',
+    name: 'Thon',
+    unit: 'kg',
+    stock: 15,
+    minStock: 3,
+    unitPrice: 60.00,
+    category: 'poisson'
+  },
+  {
+    id: 'ingredient-12',
+    name: 'Poulet',
+    unit: 'kg',
+    stock: 20,
+    minStock: 4,
+    unitPrice: 45.00,
+    category: 'viande'
+  },
+  {
+    id: 'ingredient-13',
+    name: 'Viande hachée',
+    unit: 'kg',
+    stock: 25,
+    minStock: 5,
+    unitPrice: 50.00,
+    category: 'viande'
+  },
+  {
+    id: 'ingredient-14',
+    name: 'Orange',
+    unit: 'kg',
+    stock: 30,
+    minStock: 10,
+    unitPrice: 12.00,
+    category: 'fruit'
+  },
+  {
+    id: 'ingredient-15',
+    name: 'Spaghetti',
+    unit: 'kg',
+    stock: 40,
+    minStock: 10,
+    unitPrice: 15.00,
+    category: 'pâtes'
+  }
+];
+
+// Initial recipes
+export const recipes: Recipe[] = [
+  // Burger recipes
+  {
+    productId: 'burger-cheese',
+    ingredients: [
+      { ingredientId: 'ingredient-1', quantity: 1 },  // Pain à burger
+      { ingredientId: 'ingredient-2', quantity: 1 },  // Steak de bœuf
+      { ingredientId: 'ingredient-3', quantity: 2 },  // Fromage Cheddar
+      { ingredientId: 'ingredient-4', quantity: 0.05 },  // Tomate
+      { ingredientId: 'ingredient-5', quantity: 0.03 },  // Laitue
+      { ingredientId: 'ingredient-6', quantity: 0.02 },  // Ketchup
+      { ingredientId: 'ingredient-7', quantity: 0.02 },  // Mayonnaise
+    ]
+  },
+  // Pizza recipe
+  {
+    productId: 'pizza-margherita',
+    ingredients: [
+      { ingredientId: 'ingredient-8', quantity: 0.2 },  // Farine à pizza
+      { ingredientId: 'ingredient-9', quantity: 0.1 },  // Sauce tomate
+      { ingredientId: 'ingredient-10', quantity: 0.15 },  // Mozzarella
+    ]
+  },
+  // Thon pizza
+  {
+    productId: 'pizza-thon',
+    ingredients: [
+      { ingredientId: 'ingredient-8', quantity: 0.2 },  // Farine à pizza
+      { ingredientId: 'ingredient-9', quantity: 0.1 },  // Sauce tomate
+      { ingredientId: 'ingredient-10', quantity: 0.12 },  // Mozzarella
+      { ingredientId: 'ingredient-11', quantity: 0.1 },  // Thon
+    ]
+  },
+  // Orange juice
+  {
+    productId: 'drink-orange',
+    ingredients: [
+      { ingredientId: 'ingredient-14', quantity: 0.4 },  // Orange
+    ]
+  }
+];
+
 export const initialState: POSState = {
   products,
   categories,
@@ -505,4 +687,6 @@ export const initialState: POSState = {
     taxId: '',
   },
   currency: 'MAD',
+  ingredients: ingredients,
+  recipes: recipes,
 };

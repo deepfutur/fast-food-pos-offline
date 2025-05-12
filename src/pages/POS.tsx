@@ -11,7 +11,7 @@ import { products as mockProducts } from '../data/mockData';
 
 const POS: React.FC = () => {
   const { state, dispatch } = usePOS();
-  const { products, selectedCategory } = state;
+  const { products, selectedCategory, ingredients, recipes } = state;
   const [displayProducts, setDisplayProducts] = useState<Product[]>([]);
   
   // Force refresh products from mockData to ensure latest prices
@@ -36,6 +36,27 @@ const POS: React.FC = () => {
     setDisplayProducts(products);
     console.log("Display products updated with latest state");
   }, [products]);
+
+  // Check ingredient stock levels
+  useEffect(() => {
+    // Find ingredients that are below their minimum stock level
+    const lowStockIngredients = ingredients.filter(
+      ing => ing.stock <= (ing.minStock || 0)
+    );
+    
+    if (lowStockIngredients.length > 0) {
+      // Show warning toast for low stock ingredients
+      toast({
+        title: "Ingrédients en stock bas",
+        description: `${lowStockIngredients.length} ingrédients ont un stock bas`,
+        variant: "warning",
+      });
+      
+      // Log details to console
+      console.log("Ingrédients en stock bas:", 
+        lowStockIngredients.map(ing => `${ing.name}: ${ing.stock}/${ing.minStock} ${ing.unit}`));
+    }
+  }, [ingredients]);
   
   // Filter products by category
   const filteredProducts = selectedCategory
