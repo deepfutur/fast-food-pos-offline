@@ -31,7 +31,7 @@ const ShoppingCart: React.FC = () => {
     const orderId = `order-${Date.now()}`;
     setCompletedOrderId(orderId);
     setShowPayment(false);
-    setShowReceipt(true);
+    setShowReceipt(true); // Automatically show receipt after payment
   };
   
   return (
@@ -101,7 +101,10 @@ const ShoppingCart: React.FC = () => {
       {showReceipt && completedOrderId && (
         <ReceiptPreview 
           orderId={completedOrderId} 
-          onClose={() => setShowReceipt(false)}
+          onClose={() => {
+            setShowReceipt(false);
+            setCompletedOrderId(null);
+          }}
         />
       )}
     </div>

@@ -14,6 +14,7 @@ const POS: React.FC = () => {
   const { state, dispatch } = usePOS();
   const navigate = useNavigate();
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+  const [showReceipt, setShowReceipt] = useState(false);
   const [completedOrderId, setCompletedOrderId] = useState<string | null>(null);
   const [displayProducts, setDisplayProducts] = useState(state.products);
   
@@ -73,6 +74,7 @@ const POS: React.FC = () => {
     const orderId = `order-${Date.now()}`;
     setCompletedOrderId(orderId);
     setIsPaymentOpen(false);
+    setShowReceipt(true); // Auto-show receipt after payment
   };
   
   // Handle admin navigation
@@ -132,10 +134,13 @@ const POS: React.FC = () => {
         onComplete={handlePaymentComplete}
       />
       
-      {completedOrderId && (
+      {showReceipt && completedOrderId && (
         <ReceiptPreview 
           orderId={completedOrderId}
-          onClose={() => setCompletedOrderId(null)}
+          onClose={() => {
+            setShowReceipt(false);
+            setCompletedOrderId(null);
+          }}
         />
       )}
     </div>
