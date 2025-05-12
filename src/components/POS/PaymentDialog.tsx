@@ -104,8 +104,13 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ isOpen, onClose, onComple
       description: "La commande a été complétée avec succès",
     });
     
-    // Appel de onComplete pour déclencher l'affichage du reçu
-    onComplete(paymentMethod, paymentMethod === 'cash' ? parseFloat(cashAmount) : undefined);
+    // Fermer d'abord la boîte de dialogue de paiement
+    onClose();
+    
+    // Puis déclencher l'affichage du reçu avec un délai pour assurer la transition
+    setTimeout(() => {
+      onComplete(paymentMethod, paymentMethod === 'cash' ? parseFloat(cashAmount) : undefined);
+    }, 300);
   };
 
   return (

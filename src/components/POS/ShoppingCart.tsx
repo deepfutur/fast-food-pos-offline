@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { usePOS } from '../../context/POSContext';
 import { Button } from '@/components/ui/button';
 import { Trash2, FileText } from 'lucide-react';
@@ -12,6 +13,14 @@ const ShoppingCart: React.FC = () => {
   const [showPayment, setShowPayment] = useState(false);
   const [showReceipt, setShowReceipt] = useState(false);
   const [completedOrderId, setCompletedOrderId] = useState<string | null>(null);
+  
+  // Nettoyer l'état à la fermeture du composant
+  useEffect(() => {
+    return () => {
+      setShowReceipt(false);
+      setCompletedOrderId(null);
+    };
+  }, []);
   
   const handleQuantityChange = (id: string, change: number) => {
     const cartItem = cart.find(item => item.id === id);
@@ -31,10 +40,18 @@ const ShoppingCart: React.FC = () => {
     setCompletedOrderId(orderId);
     setShowPayment(false);
     
-    // Explicitement afficher le reçu après le paiement
-    console.log("Payment complete, showing receipt for order:", orderId);
-    setTimeout(() => setShowReceipt(true), 100); // Petit délai pour s'assurer que tout est prêt
+    // Forcer la mise à jour de l'état pour afficher le reçu
+    console.log("Payment complete in ShoppingCart, showing receipt for order:", orderId);
+    setTimeout(() => {
+      setShowReceipt(true);
+      console.log("Receipt visibility state updated to:", true);
+    }, 300);
   };
+  
+  // Pour déboguer l'état du reçu
+  useEffect(() => {
+    console.log("Receipt state changed:", { showReceipt, completedOrderId });
+  }, [showReceipt, completedOrderId]);
   
   return (
     <div className="bg-white rounded-lg shadow-lg p-4 h-full flex flex-col">
@@ -100,12 +117,12 @@ const ShoppingCart: React.FC = () => {
         onComplete={handlePaymentComplete}
       />
       
-      {/* Afficher le reçu quand showReceipt est true et un orderId est disponible */}
+      {/* Composant de reçu rendu conditionnellement */}
       {showReceipt && completedOrderId && (
         <ReceiptPreview 
           orderId={completedOrderId} 
           onClose={() => {
-            console.log("Closing receipt");
+            console.log("Closing receipt in ShoppingCart");
             setShowReceipt(false);
             setCompletedOrderId(null);
           }}
