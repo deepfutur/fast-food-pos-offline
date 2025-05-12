@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import { CartItem, POSState, Product, User, Ingredient, Recipe } from '../types/pos';
 import { products, categories, users, ingredients, recipes, businessInfo } from '../data/mockData';
@@ -110,7 +111,7 @@ const initialState: POSState = {
   ],
   selectedCategory: null,
   currentUser: null,
-  tax: 0.2,  // 20% VAT
+  tax: 0,  // Changed from 0.2 (20%) to 0 (0%)
   businessInfo: businessInfo || {
     name: 'My Restaurant',
     address: '123 Main Street',

@@ -1,4 +1,3 @@
-
 export const products = [
   {
     id: 'burger-cheese',
@@ -106,7 +105,7 @@ export const users = [
   },
 ];
 
-export const tax = 0.2; // 20% VAT
+export const tax = 0; // Changed from 0.2 (20%) to 0 (0%)
 
 export const currency = 'MAD';
 
