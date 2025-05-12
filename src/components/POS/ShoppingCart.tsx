@@ -12,7 +12,7 @@ const ShoppingCart: React.FC = () => {
   const { cart } = state;
   const [showPayment, setShowPayment] = useState(false);
   const [showReceipt, setShowReceipt] = useState(false);
-  const [currentOrder, setCurrentOrder] = useState<any>(null);
+  const [completedOrderId, setCompletedOrderId] = useState<string | null>(null);
   
   const handleQuantityChange = (id: string, change: number) => {
     const cartItem = cart.find(item => item.id === id);
@@ -22,32 +22,14 @@ const ShoppingCart: React.FC = () => {
   };
   
   const handleCompletePurchase = () => {
-    const orderPreview = {
-      items: [...cart],
-      subtotal: getCartSubtotal(),
-      tax: getCartTax(),
-      total: getCartTotal(),
-      paymentMethod: 'cash',
-      cashReceived: 0,
-      changeDue: 0
-    };
-    
-    setCurrentOrder(orderPreview);
+    if (cart.length === 0) return;
     setShowPayment(true);
   };
   
   const handlePaymentComplete = (paymentMethod: 'cash' | 'card' | 'voucher', cashReceived?: number) => {
-    const orderDetails = {
-      items: [...cart],
-      subtotal: getCartSubtotal(),
-      tax: getCartTax(),
-      total: getCartTotal(),
-      paymentMethod: paymentMethod,
-      cashReceived: cashReceived,
-      changeDue: cashReceived ? cashReceived - getCartTotal() : undefined
-    };
-    
-    setCurrentOrder(orderDetails);
+    // Generate a unique order ID for the receipt
+    const orderId = `order-${Date.now()}`;
+    setCompletedOrderId(orderId);
     setShowPayment(false);
     setShowReceipt(true);
   };
@@ -90,15 +72,15 @@ const ShoppingCart: React.FC = () => {
       <div className="mt-4 pt-4 border-t">
         <div className="flex justify-between mb-1">
           <span>Sous-total:</span>
-          <span>{getCartSubtotal().toFixed(2)} MAD</span>
+          <span>{getCartSubtotal().toFixed(2)} {state.currency}</span>
         </div>
         <div className="flex justify-between mb-1">
           <span>TVA ({(state.tax * 100).toFixed(0)}%):</span>
-          <span>{getCartTax().toFixed(2)} MAD</span>
+          <span>{getCartTax().toFixed(2)} {state.currency}</span>
         </div>
         <div className="flex justify-between text-xl font-bold mb-4">
           <span>Total:</span>
-          <span>{getCartTotal().toFixed(2)} MAD</span>
+          <span>{getCartTotal().toFixed(2)} {state.currency}</span>
         </div>
         
         <Button 
@@ -106,7 +88,7 @@ const ShoppingCart: React.FC = () => {
           disabled={cart.length === 0}
           onClick={handleCompletePurchase}
         >
-          Payer {getCartTotal().toFixed(2)} MAD
+          Payer {getCartTotal().toFixed(2)} {state.currency}
         </Button>
       </div>
       
@@ -116,9 +98,9 @@ const ShoppingCart: React.FC = () => {
         onComplete={handlePaymentComplete}
       />
       
-      {currentOrder && (
+      {showReceipt && completedOrderId && (
         <ReceiptPreview 
-          orderId={`preview-${Date.now()}`} 
+          orderId={completedOrderId} 
           onClose={() => setShowReceipt(false)}
         />
       )}

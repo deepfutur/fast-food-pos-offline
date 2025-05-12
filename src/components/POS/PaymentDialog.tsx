@@ -92,6 +92,8 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ isOpen, onClose, onComple
       type: "credit", 
       amount: total,
       date: new Date().toISOString(), 
+      paymentMethod: paymentMethod,
+      category: "sales",
       description: `Vente - ${state.cart.reduce((sum, item) => sum + item.quantity, 0)} produits`
     });
     

@@ -1,4 +1,3 @@
-
 export interface Product {
   id: string;
   name: string;
@@ -86,7 +85,7 @@ export interface BusinessInfo {
   phone: string;
   taxId: string;
   logo?: string;
-  website?: string; // Added website property
+  website?: string;
 }
 
 export interface POSState {
