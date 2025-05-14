@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { usePOS } from '../../context/POSContext';
 import { Button } from '@/components/ui/button';
 import { Trash2, FileText } from 'lucide-react';
@@ -12,15 +11,7 @@ const ShoppingCart: React.FC = () => {
   const { cart } = state;
   const [showPayment, setShowPayment] = useState(false);
   const [showReceipt, setShowReceipt] = useState(false);
-  const [completedOrderId, setCompletedOrderId] = useState<string | null>(null);
-  
-  // Nettoyer l'état à la fermeture du composant
-  useEffect(() => {
-    return () => {
-      setShowReceipt(false);
-      setCompletedOrderId(null);
-    };
-  }, []);
+  const [currentOrder, setCurrentOrder] = useState<any>(null);
   
   const handleQuantityChange = (id: string, change: number) => {
     const cartItem = cart.find(item => item.id === id);
@@ -30,28 +21,35 @@ const ShoppingCart: React.FC = () => {
   };
   
   const handleCompletePurchase = () => {
-    if (cart.length === 0) return;
+    const orderPreview = {
+      items: [...cart],
+      subtotal: getCartSubtotal(),
+      tax: getCartTax(),
+      total: getCartTotal(),
+      paymentMethod: 'cash',
+      cashReceived: 0,
+      changeDue: 0
+    };
+    
+    setCurrentOrder(orderPreview);
     setShowPayment(true);
   };
   
   const handlePaymentComplete = (paymentMethod: 'cash' | 'card' | 'voucher', cashReceived?: number) => {
-    // Generate a unique order ID for the receipt
-    const orderId = `order-${Date.now()}`;
-    setCompletedOrderId(orderId);
-    setShowPayment(false);
+    const orderDetails = {
+      items: [...cart],
+      subtotal: getCartSubtotal(),
+      tax: getCartTax(),
+      total: getCartTotal(),
+      paymentMethod: paymentMethod,
+      cashReceived: cashReceived,
+      changeDue: cashReceived ? cashReceived - getCartTotal() : undefined
+    };
     
-    // Forcer la mise à jour de l'état pour afficher le reçu
-    console.log("Payment complete in ShoppingCart, showing receipt for order:", orderId);
-    setTimeout(() => {
-      setShowReceipt(true);
-      console.log("Receipt visibility state updated to:", true);
-    }, 300);
+    setCurrentOrder(orderDetails);
+    setShowPayment(false);
+    setShowReceipt(true);
   };
-  
-  // Pour déboguer l'état du reçu
-  useEffect(() => {
-    console.log("Receipt state changed:", { showReceipt, completedOrderId });
-  }, [showReceipt, completedOrderId]);
   
   return (
     <div className="bg-white rounded-lg shadow-lg p-4 h-full flex flex-col">
@@ -91,15 +89,15 @@ const ShoppingCart: React.FC = () => {
       <div className="mt-4 pt-4 border-t">
         <div className="flex justify-between mb-1">
           <span>Sous-total:</span>
-          <span>{getCartSubtotal().toFixed(2)} {state.currency}</span>
+          <span>{getCartSubtotal().toFixed(2)} MAD</span>
         </div>
         <div className="flex justify-between mb-1">
           <span>TVA ({(state.tax * 100).toFixed(0)}%):</span>
-          <span>{getCartTax().toFixed(2)} {state.currency}</span>
+          <span>{getCartTax().toFixed(2)} MAD</span>
         </div>
         <div className="flex justify-between text-xl font-bold mb-4">
           <span>Total:</span>
-          <span>{getCartTotal().toFixed(2)} {state.currency}</span>
+          <span>{getCartTotal().toFixed(2)} MAD</span>
         </div>
         
         <Button 
@@ -107,7 +105,7 @@ const ShoppingCart: React.FC = () => {
           disabled={cart.length === 0}
           onClick={handleCompletePurchase}
         >
-          Payer {getCartTotal().toFixed(2)} {state.currency}
+          Payer {getCartTotal().toFixed(2)} MAD
         </Button>
       </div>
       
@@ -117,15 +115,11 @@ const ShoppingCart: React.FC = () => {
         onComplete={handlePaymentComplete}
       />
       
-      {/* Composant de reçu rendu conditionnellement */}
-      {showReceipt && completedOrderId && (
+      {currentOrder && (
         <ReceiptPreview 
-          orderId={completedOrderId} 
-          onClose={() => {
-            console.log("Closing receipt in ShoppingCart");
-            setShowReceipt(false);
-            setCompletedOrderId(null);
-          }}
+          isOpen={showReceipt}
+          onClose={() => setShowReceipt(false)}
+          order={currentOrder}
         />
       )}
     </div>

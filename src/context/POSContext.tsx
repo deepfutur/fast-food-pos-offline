@@ -1,10 +1,9 @@
-
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-import { CartItem, POSState, Product, User, Ingredient, Recipe } from '../types/pos';
-import { products, categories, users, ingredients, recipes, businessInfo } from '../data/mockData';
+import { CartItem, POSState, Product, User } from '../types/pos';
+import { initialState } from '../data/mockData';
 
 type POSAction = 
-  | { type: 'SET_CATEGORY'; payload: string | null }
+  | { type: 'SET_CATEGORY'; payload: string }
   | { type: 'ADD_TO_CART'; payload: Product }
   | { type: 'REMOVE_FROM_CART'; payload: string }
   | { type: 'UPDATE_QUANTITY'; payload: { id: string; quantity: number } }
@@ -18,11 +17,7 @@ type POSAction =
   | { type: 'UPDATE_USER_PIN'; payload: { userId: string; newPin: string } }
   | { type: 'ADD_USER'; payload: User }
   | { type: 'UPDATE_SETTINGS'; payload: { businessInfo: POSState['businessInfo']; tax: number; currency: POSState['currency'] } }
-  | { type: 'DELETE_ORDER'; payload: string }
-  | { type: 'ADD_INGREDIENT'; payload: Ingredient }
-  | { type: 'UPDATE_INGREDIENT'; payload: Ingredient }
-  | { type: 'DELETE_INGREDIENT'; payload: string }
-  | { type: 'SET_RECIPE'; payload: Recipe };
+  | { type: 'DELETE_ORDER'; payload: string };
 
 interface POSContextType {
   state: POSState;
@@ -51,8 +46,6 @@ const saveToLocalStorage = (state: POSState) => {
     localStorage.setItem('pos_users', JSON.stringify(state.users));
     localStorage.setItem('pos_orders', JSON.stringify(state.orders));
     localStorage.setItem('pos_businessInfo', JSON.stringify(state.businessInfo));
-    localStorage.setItem('pos_ingredients', JSON.stringify(state.ingredients));
-    localStorage.setItem('pos_recipes', JSON.stringify(state.recipes));
   } catch (error) {
     console.error("Erreur lors de la sauvegarde dans localStorage:", error);
   }
@@ -65,17 +58,13 @@ const loadFromLocalStorage = (): Partial<POSState> => {
     const users = localStorage.getItem('pos_users');
     const orders = localStorage.getItem('pos_orders');
     const businessInfo = localStorage.getItem('pos_businessInfo');
-    const ingredients = localStorage.getItem('pos_ingredients');
-    const recipes = localStorage.getItem('pos_recipes');
     
     return {
-      products: products ? JSON.parse(products) : [],
-      categories: categories ? JSON.parse(categories) : [],
-      users: users ? JSON.parse(users) : [],
-      orders: orders ? JSON.parse(orders) : [],
-      businessInfo: businessInfo ? JSON.parse(businessInfo) : {},
-      ingredients: ingredients ? JSON.parse(ingredients) : [],
-      recipes: recipes ? JSON.parse(recipes) : [],
+      products: products ? JSON.parse(products) : initialState.products,
+      categories: categories ? JSON.parse(categories) : initialState.categories,
+      users: users ? JSON.parse(users) : initialState.users,
+      orders: orders ? JSON.parse(orders) : initialState.orders,
+      businessInfo: businessInfo ? JSON.parse(businessInfo) : initialState.businessInfo,
     };
   } catch (error) {
     console.error("Erreur lors du chargement depuis localStorage:", error);
@@ -83,49 +72,29 @@ const loadFromLocalStorage = (): Partial<POSState> => {
   }
 };
 
-// Define initial state explicitly here instead of importing
-const initialState: POSState = {
-  products: products || [],
-  categories: categories || [],
-  cart: [],
-  orders: [],
+const initialStateWithLocalStorage = {
+  ...initialState,
+  ...loadFromLocalStorage(),
   users: [
     {
       id: 'admin-1',
       name: 'Admin',
       pin: '2387',
-      role: 'admin'
+      role: 'admin' as const
     },
     {
       id: 'cashier-1',
       name: 'Caissier 1',
       pin: '9876',
-      role: 'cashier'
+      role: 'cashier' as const
     },
     {
       id: 'cashier-2',
       name: 'Caissier 2',
       pin: '5432',
-      role: 'cashier'
+      role: 'cashier' as const
     }
-  ],
-  selectedCategory: null,
-  currentUser: null,
-  tax: 0,  // Changed from 0.2 (20%) to 0 (0%)
-  businessInfo: businessInfo || {
-    name: 'My Restaurant',
-    address: '123 Main Street',
-    phone: '+1 234 567 890',
-    taxId: '12345678',
-  },
-  currency: 'MAD',
-  ingredients: ingredients || [],
-  recipes: recipes || [],
-};
-
-const initialStateWithLocalStorage = {
-  ...initialState,
-  ...loadFromLocalStorage(),
+  ]
 };
 
 const posReducer = (state: POSState, action: POSAction): POSState => {
@@ -347,63 +316,6 @@ const posReducer = (state: POSState, action: POSAction): POSState => {
         ...state,
         orders: state.orders.filter(order => order.id !== orderId)
       };
-      
-      saveToLocalStorage(newState);
-      return newState;
-    }
-    
-    case 'ADD_INGREDIENT': {
-      newState = {
-        ...state,
-        ingredients: [...state.ingredients, action.payload]
-      };
-      
-      saveToLocalStorage(newState);
-      return newState;
-    }
-    
-    case 'UPDATE_INGREDIENT': {
-      newState = {
-        ...state,
-        ingredients: state.ingredients.map(ingredient => 
-          ingredient.id === action.payload.id ? action.payload : ingredient
-        )
-      };
-      
-      saveToLocalStorage(newState);
-      return newState;
-    }
-    
-    case 'DELETE_INGREDIENT': {
-      newState = {
-        ...state,
-        ingredients: state.ingredients.filter(ingredient => ingredient.id !== action.payload)
-      };
-      
-      saveToLocalStorage(newState);
-      return newState;
-    }
-    
-    case 'SET_RECIPE': {
-      // Check if recipe for this product already exists
-      const existingRecipeIndex = state.recipes.findIndex(r => r.productId === action.payload.productId);
-      
-      if (existingRecipeIndex >= 0) {
-        // Update existing recipe
-        const updatedRecipes = [...state.recipes];
-        updatedRecipes[existingRecipeIndex] = action.payload;
-        
-        newState = {
-          ...state,
-          recipes: updatedRecipes
-        };
-      } else {
-        // Add new recipe
-        newState = {
-          ...state,
-          recipes: [...state.recipes, action.payload]
-        };
-      }
       
       saveToLocalStorage(newState);
       return newState;

@@ -14,29 +14,9 @@ export interface ProductOption {
   name: string;
   choices: {
     id: string;
-    choiceName: string;
+    name: string;
     price: number;
   }[];
-}
-
-export interface Ingredient {
-  id: string;
-  name: string;
-  unit: string;
-  stock: number;
-  minStock?: number;
-  unitPrice: number;
-  category: string;
-}
-
-export interface RecipeItem {
-  ingredientId: string;
-  quantity: number;
-}
-
-export interface Recipe {
-  productId: string;
-  ingredients: RecipeItem[];
 }
 
 export interface Category {
@@ -80,15 +60,6 @@ export interface User {
   role: 'admin' | 'cashier';
 }
 
-export interface BusinessInfo {
-  name: string;
-  address: string;
-  phone: string;
-  taxId: string;
-  logo?: string;
-  website?: string;
-}
-
 export interface POSState {
   products: Product[];
   categories: Category[];
@@ -98,8 +69,12 @@ export interface POSState {
   selectedCategory: string | null;
   currentUser: User | null;
   tax: number;
-  businessInfo: BusinessInfo;
-  currency: string;
-  ingredients: Ingredient[];
-  recipes: Recipe[];
+  businessInfo: {
+    name: string;
+    address: string;
+    phone: string;
+    taxId: string;
+    logo?: string;
+  };
+  currency: 'EUR' | 'XAF' | 'USD' | 'MAD';
 }

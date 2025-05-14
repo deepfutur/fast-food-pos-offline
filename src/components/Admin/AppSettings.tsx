@@ -18,7 +18,7 @@ const AppSettings: React.FC = () => {
       address: state.businessInfo.address,
       phone: state.businessInfo.phone,
       taxId: state.businessInfo.taxId,
-      tax: state.tax * 100, // This will be 0 now
+      tax: state.tax * 100,
       currency: state.currency
     }
   });
