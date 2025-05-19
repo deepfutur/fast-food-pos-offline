@@ -12,6 +12,7 @@ interface ProductGridProps {
 
 const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
   const { addToCart, state } = usePOS();
+  const [selectedCategory, setSelectedCategory] = React.useState('all');
   
   useEffect(() => {
     console.log("ProductGrid received products:", products.length);
