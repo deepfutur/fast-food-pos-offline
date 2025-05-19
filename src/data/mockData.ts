@@ -27,7 +27,7 @@ export const products: Product[] = [
   {
     id: 'pizza-thon',
     name: 'Pizza Thon',
-    price: 30.00, // Updated price
+    price: 35.00, // Updated price
     category: 'pizza',
     description: 'Sauce tomate, thon, oignon, mozzarella',
     image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591',
@@ -43,7 +43,7 @@ export const products: Product[] = [
   {
     id: 'pizza-viande',
     name: 'Pizza Viande Hachée',
-    price: 40.00, // Updated price
+    price: 45.00, // Updated price
     category: 'pizza',
     description: 'Sauce tomate, viande hachée, mozzarella',
     image: 'https://images.unsplash.com/photo-1588315029754-2dd089d39a1a',
@@ -51,7 +51,7 @@ export const products: Product[] = [
   {
     id: 'pizza-4-saisons',
     name: 'Pizza 4 Saisons',
-    price: 40.00, // Updated price
+    price: 50.00, // Updated price
     category: 'pizza',
     description: 'Sauce tomate, viande hachée, thon, poulet, charcuterie, mozzarella',
     image: 'https://images.unsplash.com/photo-1594007654729-407eedc4be65',
@@ -109,7 +109,7 @@ export const products: Product[] = [
   {
     id: 'tacos-mixte',
     name: 'Tacos Mixte',
-    price: 35.00,
+    price: 40.00,
     category: 'tacos',
     description: 'Tacos mixte poulet et viande hachée',
     image: 'https://images.unsplash.com/photo-1504544750208-dc0358e63f7f',
@@ -125,7 +125,7 @@ export const products: Product[] = [
   {
     id: 'tacos-nuggets',
     name: 'Tacos Nuggets',
-    price: 40.00,
+    price: 35.00,
     category: 'tacos',
     description: 'Tacos avec nuggets',
     image: 'https://images.unsplash.com/photo-1584208632869-05fa2b2a5934',
@@ -133,7 +133,7 @@ export const products: Product[] = [
   {
     id: 'tacos-cordon-bleu',
     name: 'Tacos Cordon Bleu',
-    price: 40.00,
+    price: 35.00,
     category: 'tacos',
     description: 'Tacos avec cordon bleu',
     image: 'https://images.unsplash.com/photo-1615870216519-2f9fa575fa6c',
@@ -175,7 +175,7 @@ export const products: Product[] = [
   {
     id: 'drink-pineapple',
     name: 'Jus d\'ananas',
-    price: 20.00,
+    price: 18.00,
     category: 'drinks',
     image: 'https://images.unsplash.com/photo-1587736661445-d96c39068824',
     description: 'Jus d\'ananas frais'
@@ -191,7 +191,7 @@ export const products: Product[] = [
   {
     id: 'drink-mango',
     name: 'Jus de mangue',
-    price: 20.00,
+    price: 18.00,
     category: 'drinks',
     image: 'https://images.unsplash.com/photo-1623065422902-30a2d299bbe4',
     description: 'Jus de mangue frais'
@@ -239,7 +239,7 @@ export const products: Product[] = [
   {
     id: 'drink-water',
     name: 'Bouteille d\'eau',
-    price: 4.00,
+    price: 3.00,
     category: 'drinks',
     image: 'https://images.unsplash.com/photo-1606168094336-48f955066ebd',
     description: 'Eau minérale'
@@ -278,6 +278,14 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1478369402113-1fd53f17e8b4?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
     description: 'Salade de fruits frais de saison'
   },
+    {
+    id: 'salade-cezar',
+    name: 'Salade cezar',
+    price: 25.00,
+    category: 'salads',
+    image: 'https://images.unsplash.com/photo-1478369402113-1fd53f17e8b4?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    description: 'Salade cezar'
+  },
 
   // Pasticcio
   {
@@ -291,7 +299,7 @@ export const products: Product[] = [
   {
     id: 'pasticcio-poulet',
     name: 'Pasticcio poulet',
-    price: 35.00,
+    price: 30.00,
     category: 'pasticcio',
     image: 'https://images.unsplash.com/photo-1574894709920-11b28e7367e3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
     description: 'Pasticcio au poulet'
@@ -312,6 +320,14 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1473093226795-af9932fe5856?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
     description: 'Pasticcio aux fruits de mer'
   },
+    {
+    id: 'pasticcio-charcuteurie',
+    name: 'Pasticcio charcuteurie',
+    price: 30.00,
+    category: 'pasticcio',
+    image: 'https://images.unsplash.com/photo-1473093226795-af9932fe5856?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
+    description: 'Pasticcio charcuteurie'
+  },
 
   // Sandwiches
   {
@@ -325,7 +341,7 @@ export const products: Product[] = [
   {
     id: 'sandwich-crispy',
     name: 'Sandwich crispy chicken',
-    price: 30.00,
+    price: 25.00,
     category: 'sandwiches',
     image: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
     description: 'Sandwich au poulet croustillant'
@@ -355,12 +371,12 @@ export const products: Product[] = [
     description: 'Sandwich à la saucisse'
   },
   {
-    id: 'sandwich-chamali',
-    name: 'Sandwich chamali',
-    price: 20.00,
+    id: 'sandwich-frites',
+    name: 'Sandwich frites',
+    price: 5.00,
     category: 'sandwiches',
     image: 'https://images.unsplash.com/photo-1509722747041-616f39b57569?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
-    description: 'Sandwich chamali traditionnel'
+    description: 'Sandwich frites'
   },
   {
     id: 'sandwich-deli',
@@ -383,7 +399,7 @@ export const products: Product[] = [
   {
     id: 'burger-chicken',
     name: 'Chicken burger',
-    price: 27.00,
+    price: 25.00,
     category: 'burgers',
     image: 'https://images.unsplash.com/photo-1614790141165-d5162806ecd8?auto=format&fit=crop&w=500&h=500&q=80',
     description: 'Burger au poulet'
@@ -409,7 +425,7 @@ export const products: Product[] = [
   {
     id: 'pasta-bolognaise',
     name: 'Spaghetti bolognaise',
-    price: 30.00,
+    price: 35.00,
     category: 'pasta',
     image: 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
     description: 'Spaghetti à la sauce bolognaise'
@@ -417,18 +433,18 @@ export const products: Product[] = [
   {
     id: 'pasta-poulet',
     name: 'Spaghetti sauce blanche poulet aux champignons',
-    price: 35.00,
+    price: 30.00,
     category: 'pasta',
     image: 'https://images.unsplash.com/photo-1645112411341-6c4fd023714a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
     description: 'Spaghetti sauce blanche, poulet et champignons'
   },
   {
-    id: 'pasta-pesto',
-    name: 'Spaghetti pesto',
-    price: 35.00,
+    id: 'pasta-carbonara',
+    name: 'Spaghetti carbonara',
+    price: 3.00,
     category: 'pasta',
     image: 'https://images.unsplash.com/photo-1611270629569-8b357cb88da9?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
-    description: 'Spaghetti à la sauce pesto'
+    description: 'Spaghetti carbonara'
   },
   {
     id: 'pasta-mer',
