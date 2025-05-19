@@ -441,10 +441,10 @@ export const products: Product[] = [
   {
     id: 'pasta-carbonara',
     name: 'Spaghetti carbonara',
-    price: 3.00,
+    price: 35.00,
     category: 'pasta',
-    image: 'https://images.unsplash.com/photo-1611270629569-8b357cb88da9?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=80',
-    description: 'Spaghetti carbonara'
+    image: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0',
+    description: 'Pâtes carbonara avec sauce crémeuse et lardons'
   },
   {
     id: 'pasta-mer',
